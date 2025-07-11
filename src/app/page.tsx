@@ -1,13 +1,14 @@
-import { FileArchive, Menu, Bell } from "lucide-react";
+import { FileArchive, Menu, Bell, MoreHorizontal } from "lucide-react";
 import OrderDashboard from "@/components/order-dashboard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Home() {
   return (
     <div className="flex h-screen bg-gray-100">
-      <aside className="w-16 bg-white flex flex-col items-center py-4">
+      <aside className="w-16 bg-white flex-col items-center py-4 hidden md:flex">
         <div className="flex flex-col items-center space-y-6">
           <Button variant="ghost" size="icon">
             <Menu className="h-6 w-6" />
@@ -19,13 +20,42 @@ export default function Home() {
       </aside>
       <div className="flex-1 flex flex-col">
         <header className="bg-white shadow-sm flex items-center justify-between p-4">
-          <div className="flex items-center">
-             <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={140} height={20} />
+          <div className="flex items-center gap-4">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[240px] p-0">
+                <div className="flex flex-col h-full bg-white">
+                  <div className="p-4 border-b">
+                    <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={140} height={20} />
+                  </div>
+                  <nav className="flex-1 p-4 space-y-2">
+                    <Button variant="ghost" className="w-full justify-start">
+                      <FileArchive className="mr-2 h-4 w-4" />
+                      Orders
+                    </Button>
+                  </nav>
+                </div>
+              </SheetContent>
+            </Sheet>
+            <div className="hidden md:block">
+              <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={140} height={20} />
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" className="flex items-center space-x-2">
+          <div className="md:hidden">
+             <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={120} height={18} />
+          </div>
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <Button variant="ghost" className="items-center space-x-2 hidden md:flex">
               <Image src="https://i.imgur.com/e23nC4z.png" alt="UK Flag" width={24} height={16} />
               <span>EN</span>
+            </Button>
+             <Button variant="ghost" className="items-center space-x-2 flex md:hidden">
+              <Image src="https://i.imgur.com/e23nC4z.png" alt="UK Flag" width={24} height={16} />
+              <span className="font-semibold">EN</span>
             </Button>
             <Button variant="ghost" size="icon">
               <Bell className="h-6 w-6" />
@@ -36,8 +66,13 @@ export default function Home() {
             </Avatar>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-6">
-          <h1 className="text-2xl font-semibold mb-4">Order Tracking</h1>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-semibold">Order Tracking</h1>
+            <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-6 w-6" />
+            </Button>
+          </div>
           <OrderDashboard />
         </main>
       </div>

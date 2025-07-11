@@ -148,7 +148,7 @@ export default function OrderDashboard() {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
 
-        if (sortConfig.key === 'orderDate') {
+        if (sortConfig.key === 'orderDate' || sortConfig.key === 'createdAt') {
             const dateA = new Date(aValue).getTime();
             const dateB = new Date(bValue).getTime();
             if (dateA < dateB) {
@@ -287,16 +287,16 @@ export default function OrderDashboard() {
       );
     }
 
-    return pages;
+    return <div className="flex space-x-1">{pages}</div>;
   };
 
   return (
     <>
-      <Card className="shadow-lg bg-white">
-        <CardContent className="p-4 space-y-4">
+      <Card className="shadow-lg bg-white max-w-full overflow-hidden">
+        <CardContent className="p-4 md:p-6 space-y-4">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="relative flex-1 md:grow-0">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
               <Input
                 placeholder="Order Search"
                 value={searchQuery}
@@ -304,10 +304,10 @@ export default function OrderDashboard() {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-10 w-full md:w-64 bg-gray-100 border-gray-100"
+                className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
               />
             </div>
-            <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1);}} defaultValue="all">
+            <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
               <SelectTrigger className="w-full md:w-auto">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
@@ -321,17 +321,17 @@ export default function OrderDashboard() {
                 <SelectItem value="Rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="w-full md:w-auto hidden md:inline-flex">
               <RefreshCw className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="w-full md:w-auto hidden md:inline-flex">
               <Columns className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="w-full md:w-auto hidden md:inline-flex">
               <FileText className="h-4 w-4" />
             </Button>
 
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex flex-col md:flex-row items-center gap-2">
               <Button
                 variant="outline"
                 className="bg-gray-100 border-gray-200"
@@ -342,7 +342,7 @@ export default function OrderDashboard() {
                 Delete
               </Button>
               <Dialog open={isAddOrderDialogOpen} onOpenChange={setIsAddOrderDialogOpen}>
-                <DialogTrigger asChild>
+                <DialogTrigger asChild className="w-full md:w-auto">
                   <Button className="bg-accent hover:bg-accent/90">
                     <Plus className="mr-2 h-4 w-4" />
                     Add New Order
@@ -353,7 +353,7 @@ export default function OrderDashboard() {
                     <DialogTitle>Add New Order</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleAddOrder} className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
                       <Label htmlFor="customerId" className="text-right">Customer ID</Label>
                       <Input id="customerId" name="customerId" required className="col-span-3" />
                     </div>
@@ -405,8 +405,8 @@ export default function OrderDashboard() {
               </Dialog>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
               <span className="text-sm text-muted-foreground">Date</span>
               <Popover>
                 <PopoverTrigger asChild>
@@ -445,8 +445,8 @@ export default function OrderDashboard() {
                 </PopoverContent>
               </Popover>
             </div>
-             <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Currency</span>
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+              <span className="text-sm text-muted-foreground">Currency</span>
                 <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="all">
                   <SelectTrigger className="w-full md:w-auto">
                     <SelectValue placeholder="All" />
@@ -470,58 +470,42 @@ export default function OrderDashboard() {
                         selectedRowsCount === paginatedOrders.length
                       }
                       onCheckedChange={(value) => handleSelectAll(!!value)}
-                      aria-label="Select all"
+                      aria-label="Select all orders"
                     />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer"
+                    className="min-w-[120px] cursor-pointer"
                     onClick={() => handleSort("id")}
                   >
                     <div className="flex items-center">
                       Order ID {renderSortIcon("id")}
                     </div>
                   </TableHead>
-                  <TableHead
-                    className="cursor-pointer"
-                    onClick={() => handleSort("customerId")}
-                  >
-                    <div className="flex items-center">
-                      Customer ID {renderSortIcon("customerId")}
-                    </div>
+                  <TableHead className="min-w-[150px] cursor-pointer hidden md:table-cell" onClick={() => handleSort("customerId")}>
+                    <div className="flex items-center"> Customer ID {renderSortIcon("customerId")}</div>
                   </TableHead>
-                  <TableHead
-                    className="cursor-pointer"
-                    onClick={() => handleSort("status")}
+                  <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("status")}
                   >
                     <div className="flex items-center">
                       Status {renderSortIcon("status")}
                     </div>
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer text-left"
+                    className="min-w-[120px] cursor-pointer text-left hidden md:table-cell"
                     onClick={() => handleSort("orderDate")}
                   >
                     <div className="flex items-center">
                       Order Date {renderSortIcon("orderDate")}
                     </div>
                   </TableHead>
-                  <TableHead
-                    className="cursor-pointer text-right"
-                    onClick={() => handleSort("quantity")}
-                  >
-                    <div className="flex items-center justify-end">
-                      Quantity {renderSortIcon("quantity")}
-                    </div>
+                  <TableHead className="min-w-[100px] cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("quantity")}>
+                    <div className="flex items-center justify-end"> Quantity {renderSortIcon("quantity")}</div>
                   </TableHead>
-                  <TableHead
-                    className="cursor-pointer text-right"
-                    onClick={() => handleSort("total")}
-                  >
-                    <div className="flex items-center justify-end">
-                      Total Amount {renderSortIcon("total")}
-                    </div>
+                  <TableHead className="cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("total")}>
+                    <div className="flex items-center justify-end"> Total Amount {renderSortIcon("total")}</div>
+
                   </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="min-w-[80px] text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -530,20 +514,21 @@ export default function OrderDashboard() {
                     <TableRow
                       key={order.id}
                       data-state={rowSelection[order.id] && "selected"}
+                      className="even:bg-gray-50 hover:bg-gray-100"
                     >
                       <TableCell className="px-4">
                         <Checkbox
-                          checked={rowSelection[order.id] || false}
+                          checked={!!rowSelection[order.id]}
                           onCheckedChange={() => handleRowSelect(order.id)}
                           aria-label={`Select order ${order.id}`}
                         />
                       </TableCell>
                       <TableCell className="font-medium">{order.id}</TableCell>
-                      <TableCell>{order.customerId}</TableCell>
+                      <TableCell className="hidden md:table-cell">{order.customerId}</TableCell>
                       <TableCell>
                         <Badge
                           className={cn(
-                            "rounded-md px-2 py-1 text-xs font-semibold border",
+                            "rounded-md px-2 py-1 text-xs font-semibold border capitalize",
                             getStatusBadgeClass(order.status)
                           )}
                           variant="outline"
@@ -551,13 +536,9 @@ export default function OrderDashboard() {
                           {order.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-left">
-                        {formatDateInUTC(order.orderDate)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {order.quantity}
-                      </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-left hidden md:table-cell">{formatDateInUTC(order.orderDate)}</TableCell>
+                      <TableCell className="text-right hidden md:table-cell">{order.quantity}</TableCell>
+                      <TableCell className="text-right hidden md:table-cell">
                         {order.total.toLocaleString("en-US", {
                           style: "currency",
                           currency: order.currency,
@@ -600,14 +581,14 @@ export default function OrderDashboard() {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
               {selectedRowsCount > 0
                 ? `${selectedRowsCount} of ${sortedOrders.length} row(s) selected.`
                 : `Total ${sortedOrders.length} orders`
               }
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-center md:justify-end space-x-2 w-full md:w-auto">
               <Button
                 variant="ghost"
                 size="icon"
