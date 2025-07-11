@@ -12,4 +12,5 @@ export type Order = {
   quantity: number;
   orderDate: string;
   currency: "VND" | "USD";
+  createdAt: string;
 };

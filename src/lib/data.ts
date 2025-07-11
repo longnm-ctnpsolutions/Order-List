@@ -9,6 +9,7 @@ export const orders: Order[] = [
     quantity: 5,
     orderDate: "2025-06-16T10:30:00Z",
     currency: "USD",
+    createdAt: "2025-06-16T10:30:00Z",
   },
   {
     id: "ORD-002",
@@ -18,6 +19,7 @@ export const orders: Order[] = [
     quantity: 10,
     orderDate: "2025-06-17T11:00:00Z",
     currency: "VND",
+    createdAt: "2025-06-17T11:00:00Z",
   },
   {
     id: "ORD-003",
@@ -27,6 +29,7 @@ export const orders: Order[] = [
     quantity: 6,
     orderDate: "2025-06-18T14:20:00Z",
     currency: "USD",
+    createdAt: "2025-06-18T14:20:00Z",
   },
   {
     id: "ORD-004",
@@ -36,6 +39,7 @@ export const orders: Order[] = [
     quantity: 20,
     orderDate: "2025-06-19T09:05:00Z",
     currency: "VND",
+    createdAt: "2025-06-19T09:05:00Z",
   },
   {
     id: "ORD-005",
@@ -45,6 +49,7 @@ export const orders: Order[] = [
     quantity: 30,
     orderDate: "2025-06-20T16:45:00Z",
     currency: "USD",
+    createdAt: "2025-06-20T16:45:00Z",
   },
   {
     id: "ORD-006",
@@ -54,6 +59,7 @@ export const orders: Order[] = [
     quantity: 16,
     orderDate: "2025-06-21T08:30:00Z",
     currency: "VND",
+    createdAt: "2025-06-21T08:30:00Z",
   },
   {
     id: "ORD-007",
@@ -63,6 +69,7 @@ export const orders: Order[] = [
     quantity: 8,
     orderDate: "2025-06-22T18:00:00Z",
     currency: "VND",
+    createdAt: "2025-06-22T18:00:00Z",
   },
   {
     id: "ORD-008",
@@ -72,6 +79,7 @@ export const orders: Order[] = [
     quantity: 5,
     orderDate: "2025-06-23T12:10:00Z",
     currency: "USD",
+    createdAt: "2025-06-23T12:10:00Z",
   },
   {
     id: "ORD-009",
@@ -81,6 +89,7 @@ export const orders: Order[] = [
     quantity: 6,
     orderDate: "2025-06-24T13:00:00Z",
     currency: "VND",
+    createdAt: "2025-06-24T13:00:00Z",
   },
   {
     id: "ORD-010",
@@ -90,6 +99,7 @@ export const orders: Order[] = [
     quantity: 10,
     orderDate: "2025-06-25T15:00:00Z",
     currency: "USD",
+    createdAt: "2025-06-25T15:00:00Z",
   },
   {
     id: "ORD-011",
@@ -99,6 +109,7 @@ export const orders: Order[] = [
     quantity: 1,
     orderDate: "2025-06-26T10:00:00Z",
     currency: "USD",
+    createdAt: "2025-06-26T10:00:00Z",
   },
   {
     id: "ORD-012",
@@ -108,6 +119,7 @@ export const orders: Order[] = [
     quantity: 8,
     orderDate: "2025-07-01T11:30:00Z",
     currency: "VND",
+    createdAt: "2025-07-01T11:30:00Z",
   },
   {
     id: "ORD-013",
@@ -117,6 +129,7 @@ export const orders: Order[] = [
     quantity: 4,
     orderDate: "2025-07-02T14:00:00Z",
     currency: "USD",
+    createdAt: "2025-07-02T14:00:00Z",
   },
   {
     id: "ORD-014",
@@ -126,6 +139,7 @@ export const orders: Order[] = [
     quantity: 5,
     orderDate: "2025-07-03T16:20:00Z",
     currency: "VND",
+    createdAt: "2025-07-03T16:20:00Z",
   },
   {
     id: "ORD-015",
@@ -135,6 +149,7 @@ export const orders: Order[] = [
     quantity: 1,
     orderDate: "2025-07-04T09:50:00Z",
     currency: "USD",
+    createdAt: "2025-07-04T09:50:00Z",
   },
   {
     id: "ORD-016",
@@ -144,6 +159,7 @@ export const orders: Order[] = [
     quantity: 15,
     orderDate: "2025-07-05T10:00:00Z",
     currency: "VND",
+    createdAt: "2025-07-05T10:00:00Z",
   },
   {
     id: "ORD-017",
@@ -153,6 +169,7 @@ export const orders: Order[] = [
     quantity: 12,
     orderDate: "2025-07-06T11:00:00Z",
     currency: "USD",
+    createdAt: "2025-07-06T11:00:00Z",
   },
   {
     id: "ORD-018",
@@ -162,6 +179,7 @@ export const orders: Order[] = [
     quantity: 25,
     orderDate: "2025-07-07T14:30:00Z",
     currency: "VND",
+    createdAt: "2025-07-07T14:30:00Z",
   },
   {
     id: "ORD-019",
@@ -171,6 +189,7 @@ export const orders: Order[] = [
     quantity: 3,
     orderDate: "2025-07-08T15:00:00Z",
     currency: "USD",
+    createdAt: "2025-07-08T15:00:00Z",
   },
   {
     id: "ORD-020",
@@ -180,6 +199,7 @@ export const orders: Order[] = [
     quantity: 7,
     orderDate: "2025-07-09T18:00:00Z",
     currency: "VND",
+    createdAt: "2025-07-09T18:00:00Z",
   },
   {
     id: "ORD-021",
@@ -189,6 +209,7 @@ export const orders: Order[] = [
     quantity: 9,
     orderDate: "2025-07-10T09:00:00Z",
     currency: "USD",
+    createdAt: "2025-07-10T09:00:00Z",
   },
   {
     id: "ORD-022",
@@ -198,6 +219,7 @@ export const orders: Order[] = [
     quantity: 4,
     orderDate: "2025-07-11T10:15:00Z",
     currency: "VND",
+    createdAt: "2025-07-11T10:15:00Z",
   },
   {
     id: "ORD-023",
@@ -207,6 +229,7 @@ export const orders: Order[] = [
     quantity: 2,
     orderDate: "2025-07-12T11:45:00Z",
     currency: "USD",
+    createdAt: "2025-07-12T11:45:00Z",
   },
   {
     id: "ORD-024",
@@ -216,6 +239,7 @@ export const orders: Order[] = [
     quantity: 22,
     orderDate: "2025-07-13T13:00:00Z",
     currency: "VND",
+    createdAt: "2025-07-13T13:00:00Z",
   },
   {
     id: "ORD-025",
@@ -225,6 +249,7 @@ export const orders: Order[] = [
     quantity: 1,
     orderDate: "2025-07-14T16:00:00Z",
     currency: "USD",
+    createdAt: "2025-07-14T16:00:00Z",
   },
   {
     id: "ORD-026",
@@ -234,6 +259,7 @@ export const orders: Order[] = [
     quantity: 18,
     orderDate: "2025-07-15T17:00:00Z",
     currency: "VND",
+    createdAt: "2025-07-15T17:00:00Z",
   },
   {
     id: "ORD-027",
@@ -243,6 +269,7 @@ export const orders: Order[] = [
     quantity: 10,
     orderDate: "2025-07-16T18:20:00Z",
     currency: "USD",
+    createdAt: "2025-07-16T18:20:00Z",
   },
   {
     id: "ORD-028",
@@ -252,6 +279,7 @@ export const orders: Order[] = [
     quantity: 50,
     orderDate: "2025-07-17T19:00:00Z",
     currency: "VND",
+    createdAt: "2025-07-17T19:00:00Z",
   },
   {
     id: "ORD-029",
@@ -261,6 +289,7 @@ export const orders: Order[] = [
     quantity: 1,
     orderDate: "2025-07-18T20:00:00Z",
     currency: "USD",
+    createdAt: "2025-07-18T20:00:00Z",
   },
   {
     id: "ORD-030",
@@ -270,5 +299,6 @@ export const orders: Order[] = [
     quantity: 5,
     orderDate: "2025-07-19T21:00:00Z",
     currency: "VND",
+    createdAt: "2025-07-19T21:00:00Z",
   },
 ];

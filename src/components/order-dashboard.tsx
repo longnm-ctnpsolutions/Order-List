@@ -63,6 +63,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 type SortKey = keyof Order;
 
@@ -72,7 +74,7 @@ export default function OrderDashboard() {
   const [sortConfig, setSortConfig] = React.useState<{
     key: SortKey;
     direction: "ascending" | "descending";
-  } | null>({ key: "orderDate", direction: "descending" });
+  } | null>({ key: "createdAt", direction: "descending" });
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [currencyFilter, setCurrencyFilter] = React.useState("all");
@@ -84,6 +86,7 @@ export default function OrderDashboard() {
   >({});
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -130,19 +133,21 @@ export default function OrderDashboard() {
   }, [orders, searchQuery, statusFilter, currencyFilter, dateRange]);
 
   const sortedOrders = React.useMemo(() => {
-    if (!sortConfig) return filteredOrders;
-    return [...filteredOrders].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
-      if (aValue < bValue) {
-        return sortConfig.direction === "ascending" ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortConfig.direction === "ascending" ? 1 : -1;
-      }
-      return 0;
-    });
+    let sortableItems = [...filteredOrders];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
   }, [filteredOrders, sortConfig]);
+
 
   const paginatedOrders = React.useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -173,9 +178,31 @@ export default function OrderDashboard() {
     setOrders(orders.filter((order) => !selectedIds.includes(order.id)));
     setRowSelection({});
     setIsDeleteDialogOpen(false);
+    setCurrentPage(1);
     toast({
       title: "Success",
       description: `${selectedIds.length} order(s) deleted.`,
+    });
+  };
+
+  const handleAddOrder = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const newOrder: Order = {
+      id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
+      customerId: formData.get("customerId") as string,
+      status: formData.get("status") as Order["status"],
+      total: parseFloat(formData.get("total") as string),
+      quantity: parseInt(formData.get("quantity") as string, 10),
+      orderDate: new Date(formData.get("orderDate") as string).toISOString(),
+      currency: formData.get("currency") as "USD" | "VND",
+      createdAt: new Date().toISOString(),
+    };
+    setOrders([newOrder, ...orders]);
+    setIsAddOrderDialogOpen(false);
+    toast({
+      title: "Success",
+      description: `Order ${newOrder.id} created.`,
     });
   };
 
@@ -211,35 +238,49 @@ export default function OrderDashboard() {
 
   const renderPagination = () => {
     const pages = [];
-    const maxPagesToShow = 8;
+    const maxPagesToShow = 5;
     let startPage = 1;
     let endPage = totalPages;
 
     if (totalPages > maxPagesToShow) {
-      startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-      endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-      if (endPage - startPage + 1 < maxPagesToShow) {
-        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-      }
+        if (currentPage <= 3) {
+            startPage = 1;
+            endPage = maxPagesToShow;
+        } else if (currentPage >= totalPages - 2) {
+            startPage = totalPages - maxPagesToShow + 1;
+            endPage = totalPages;
+        } else {
+            startPage = currentPage - 2;
+            endPage = currentPage + 2;
+        }
     }
     
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <Button
           key={i}
-          variant="ghost"
+          variant={i === currentPage ? "default" : "outline"}
           size="icon"
-          className={cn("h-8 w-8 text-sm", {
-            "text-blue-600 font-bold": i === currentPage,
-            "text-gray-500": i !== currentPage,
-          })}
+          className="h-8 w-8 text-sm"
           onClick={() => setCurrentPage(i)}
         >
           {i}
         </Button>
       );
     }
+
+    if(totalPages > maxPagesToShow) {
+        if(currentPage > 3) {
+            pages.unshift(<Button variant="ghost" size="icon" className="h-8 w-8" key="start-ellipsis">...</Button>);
+            pages.unshift(<Button key={1} variant="outline" size="icon" className="h-8 w-8 text-sm" onClick={() => setCurrentPage(1)}>1</Button>);
+        }
+        if(currentPage < totalPages - 2) {
+             pages.push(<Button variant="ghost" size="icon" className="h-8 w-8" key="end-ellipsis">...</Button>);
+             pages.push(<Button key={totalPages} variant="outline" size="icon" className="h-8 w-8 text-sm" onClick={() => setCurrentPage(totalPages)}>{totalPages}</Button>);
+        }
+    }
+
+
     return pages;
   };
 
@@ -253,16 +294,19 @@ export default function OrderDashboard() {
               <Input
                 placeholder="Order Search"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="pl-10 w-full md:w-64 bg-gray-100 border-gray-100"
               />
             </div>
-            <Select onValueChange={setStatusFilter} defaultValue="all">
+            <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1);}} defaultValue="all">
               <SelectTrigger className="w-full md:w-auto">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="New Order">New Order</SelectItem>
                 <SelectItem value="Completed">Completed</SelectItem>
                 <SelectItem value="Draft">Draft</SelectItem>
@@ -291,10 +335,68 @@ export default function OrderDashboard() {
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </Button>
-              <Button className="bg-accent hover:bg-accent/90">
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Order
-              </Button>
+              <Dialog open={isAddOrderDialogOpen} onOpenChange={setIsAddOrderDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-accent hover:bg-accent/90">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add New Order
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Order</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleAddOrder} className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="customerId" className="text-right">Customer ID</Label>
+                      <Input id="customerId" name="customerId" required className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="status" className="text-right">Status</Label>
+                      <Select name="status" required>
+                        <SelectTrigger className="col-span-3">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="New Order">New Order</SelectItem>
+                          <SelectItem value="Completed">Completed</SelectItem>
+                          <SelectItem value="Draft">Draft</SelectItem>
+                          <SelectItem value="Cancelled">Cancelled</SelectItem>
+                          <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                          <SelectItem value="Rejected">Rejected</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="quantity" className="text-right">Quantity</Label>
+                      <Input id="quantity" name="quantity" type="number" required className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="total" className="text-right">Total</Label>
+                      <Input id="total" name="total" type="number" step="0.01" required className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="orderDate" className="text-right">Order Date</Label>
+                      <Input id="orderDate" name="orderDate" type="date" required className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="currency" className="text-right">Currency</Label>
+                      <Select name="currency" required>
+                        <SelectTrigger className="col-span-3">
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="VND">VND</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit">Add Order</Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -331,7 +433,7 @@ export default function OrderDashboard() {
                     mode="range"
                     defaultMonth={dateRange?.from}
                     selected={dateRange}
-                    onSelect={setDateRange}
+                    onSelect={(range) => { setDateRange(range); setCurrentPage(1); }}
                     numberOfMonths={2}
                   />
                 </PopoverContent>
@@ -339,7 +441,7 @@ export default function OrderDashboard() {
             </div>
              <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Currency</span>
-                <Select onValueChange={setCurrencyFilter} defaultValue="all">
+                <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="all">
                   <SelectTrigger className="w-full md:w-auto">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
@@ -494,11 +596,11 @@ export default function OrderDashboard() {
           </div>
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              {selectedRowsCount} of {orders.length} row(s) selected.
+              {selectedRowsCount} of {sortedOrders.length} row(s) selected.
             </div>
             <div className="flex items-center space-x-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -508,7 +610,7 @@ export default function OrderDashboard() {
               </Button>
               {renderPagination()}
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() =>
