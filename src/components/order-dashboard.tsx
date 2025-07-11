@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -144,10 +145,25 @@ export default function OrderDashboard() {
     let sortableItems = [...filteredOrders];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (sortConfig.key === 'orderDate') {
+            const dateA = new Date(aValue).getTime();
+            const dateB = new Date(bValue).getTime();
+            if (dateA < dateB) {
+                return sortConfig.direction === "ascending" ? -1 : 1;
+            }
+            if (dateA > dateB) {
+                return sortConfig.direction === "ascending" ? 1 : -1;
+            }
+            return 0;
+        }
+
+        if (aValue < bValue) {
           return sortConfig.direction === "ascending" ? -1 : 1;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
+        if (aValue > bValue) {
           return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
@@ -246,48 +262,30 @@ export default function OrderDashboard() {
 
   const renderPagination = () => {
     const pages = [];
-    const maxPagesToShow = 5;
-    let startPage = 1;
-    let endPage = totalPages;
-
-    if (totalPages > maxPagesToShow) {
-        if (currentPage <= 3) {
-            startPage = 1;
-            endPage = maxPagesToShow;
-        } else if (currentPage >= totalPages - 2) {
-            startPage = totalPages - maxPagesToShow + 1;
-            endPage = totalPages;
-        } else {
-            startPage = currentPage - 2;
-            endPage = currentPage + 2;
-        }
+    const maxPagesToShow = 8;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
     
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <Button
           key={i}
-          variant={i === currentPage ? "default" : "outline"}
+          variant="ghost"
           size="icon"
-          className="h-8 w-8 text-sm"
+          className={cn("h-8 w-8 text-sm", {
+            "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": i === currentPage,
+            "text-gray-500": i !== currentPage,
+          })}
           onClick={() => setCurrentPage(i)}
         >
           {i}
         </Button>
       );
     }
-
-    if(totalPages > maxPagesToShow) {
-        if(currentPage > 3) {
-            pages.unshift(<Button variant="ghost" size="icon" className="h-8 w-8" key="start-ellipsis">...</Button>);
-            pages.unshift(<Button key={1} variant="outline" size="icon" className="h-8 w-8 text-sm" onClick={() => setCurrentPage(1)}>1</Button>);
-        }
-        if(currentPage < totalPages - 2) {
-             pages.push(<Button variant="ghost" size="icon" className="h-8 w-8" key="end-ellipsis">...</Button>);
-             pages.push(<Button key={totalPages} variant="outline" size="icon" className="h-8 w-8 text-sm" onClick={() => setCurrentPage(totalPages)}>{totalPages}</Button>);
-        }
-    }
-
 
     return pages;
   };
@@ -604,11 +602,14 @@ export default function OrderDashboard() {
           </div>
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              {selectedRowsCount} of {sortedOrders.length} row(s) selected.
+              {selectedRowsCount > 0
+                ? `${selectedRowsCount} of ${sortedOrders.length} row(s) selected.`
+                : `Total ${sortedOrders.length} orders`
+              }
             </div>
             <div className="flex items-center space-x-2">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -618,7 +619,7 @@ export default function OrderDashboard() {
               </Button>
               {renderPagination()}
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() =>
