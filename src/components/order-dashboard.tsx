@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import { type DateRange } from "react-day-picker";
 
@@ -74,14 +75,14 @@ export default function OrderDashboard() {
   } | null>({ key: "orderDate", direction: "descending" });
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("all");
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
-    from: new Date(2025, 5, 16),
-    to: new Date(2025, 5, 26),
-  });
+  const [currencyFilter, setCurrencyFilter] = React.useState("all");
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
+    undefined
+  );
   const [rowSelection, setRowSelection] = React.useState<
     Record<string, boolean>
   >({});
-  const [currentPage, setCurrentPage] = React.useState(4);
+  const [currentPage, setCurrentPage] = React.useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   const ITEMS_PER_PAGE = 10;
@@ -113,7 +114,10 @@ export default function OrderDashboard() {
         return statusFilter === "all" || order.status === statusFilter;
       })
       .filter((order) => {
-        if (!dateRange?.from && !dateRange?.to) return true;
+        return currencyFilter === "all" || order.currency === currencyFilter;
+      })
+      .filter((order) => {
+        if (!dateRange?.from) return true;
         const orderDate = new Date(order.orderDate);
         if (dateRange.from && orderDate < dateRange.from) return false;
         if (dateRange.to) {
@@ -123,7 +127,7 @@ export default function OrderDashboard() {
         }
         return true;
       });
-  }, [orders, searchQuery, statusFilter, dateRange]);
+  }, [orders, searchQuery, statusFilter, currencyFilter, dateRange]);
 
   const sortedOrders = React.useMemo(() => {
     if (!sortConfig) return filteredOrders;
@@ -189,27 +193,32 @@ export default function OrderDashboard() {
   const getStatusBadgeClass = (status: Order["status"]): string => {
     switch (status) {
       case "Completed":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 border-green-200";
       case "New Order":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "Draft":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border-gray-200";
       case "Cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 border-red-200";
       case "Waiting Process":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "Rejected":
-        return "bg-red-100 text-red-800";
+        return "bg-purple-100 text-purple-800 border-purple-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const renderPagination = () => {
     const pages = [];
     const maxPagesToShow = 5;
-    const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-    const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
@@ -217,7 +226,9 @@ export default function OrderDashboard() {
           key={i}
           variant={i === currentPage ? "default" : "ghost"}
           size="icon"
-          className={`h-8 w-8 ${i === currentPage ? 'bg-primary text-primary-foreground' : ''}`}
+          className={`h-8 w-8 ${
+            i === currentPage ? "bg-primary text-primary-foreground" : ""
+          }`}
           onClick={() => setCurrentPage(i)}
         >
           {i}
@@ -227,19 +238,18 @@ export default function OrderDashboard() {
     return pages;
   };
 
-
   return (
     <>
-      <Card className="shadow-lg bg-white p-4">
-        <CardContent className="p-0">
-          <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center">
+      <Card className="shadow-lg bg-white">
+        <CardContent className="p-4 space-y-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="relative flex-1 md:grow-0">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-               <Input
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <Input
                 placeholder="Order Search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-full md:w-64"
+                className="pl-10 w-full md:w-64 bg-gray-100 border-gray-100"
               />
             </div>
             <Select onValueChange={setStatusFilter} defaultValue="all">
@@ -262,29 +272,84 @@ export default function OrderDashboard() {
             <Button variant="outline" size="icon">
               <Columns className="h-4 w-4" />
             </Button>
-             <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon">
               <FileText className="h-4 w-4" />
             </Button>
 
             <div className="ml-auto flex items-center gap-2">
               <Button
                 variant="outline"
+                className="bg-gray-100 border-gray-200"
                 onClick={() => setIsDeleteDialogOpen(true)}
                 disabled={selectedRowsCount === 0}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </Button>
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button className="bg-accent hover:bg-accent/90">
                 <Plus className="mr-2 h-4 w-4" />
                 Add New Order
               </Button>
             </div>
           </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Date</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="date"
+                    variant={"outline"}
+                    className={cn(
+                      "w-[260px] justify-start text-left font-normal",
+                      !dateRange && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "dd/MM/y")} →{" "}
+                          {format(dateRange.to, "dd/MM/y")}
+                        </>
+                      ) : (
+                        format(dateRange.from, "dd/MM/y")
+                      )
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateRange?.from}
+                    selected={dateRange}
+                    onSelect={setDateRange}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+             <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Currency</span>
+                <Select onValueChange={setCurrencyFilter} defaultValue="all">
+                  <SelectTrigger className="w-full md:w-auto">
+                    <SelectValue placeholder="All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="VND">VND</SelectItem>
+                    <SelectItem value="USD">USD</SelectItem>
+                  </SelectContent>
+                </Select>
+            </div>
+          </div>
           <div className="overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-50 hover:bg-gray-50">
                   <TableHead className="w-[50px] px-4">
                     <Checkbox
                       checked={
@@ -343,7 +408,7 @@ export default function OrderDashboard() {
                       Total Amount {renderSortIcon("total")}
                     </div>
                   </TableHead>
-                   <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -365,7 +430,7 @@ export default function OrderDashboard() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "rounded-md px-2 py-1 text-xs font-semibold",
+                            "rounded-md px-2 py-1 text-xs font-semibold border",
                             getStatusBadgeClass(order.status)
                           )}
                           variant="outline"
@@ -380,9 +445,9 @@ export default function OrderDashboard() {
                         {order.quantity}
                       </TableCell>
                       <TableCell className="text-right">
-                        {order.total.toLocaleString("vi-VN", {
+                        {order.total.toLocaleString("en-US", {
                           style: "currency",
-                          currency: "VND",
+                          currency: order.currency,
                         })}
                       </TableCell>
                       <TableCell className="text-right">
@@ -395,7 +460,7 @@ export default function OrderDashboard() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem>View Details</DropdownMenuItem>
                             <DropdownMenuItem>Edit Order</DropdownMenuItem>
-                             <DropdownMenuItem
+                            <DropdownMenuItem
                               className="text-red-600"
                               onClick={() => {
                                 setRowSelection({ [order.id]: true });
@@ -422,10 +487,13 @@ export default function OrderDashboard() {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 flex items-center justify-center">
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-muted-foreground">
+              {selectedRowsCount} of {orders.length} row(s) selected.
+            </div>
             <div className="flex items-center space-x-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -435,7 +503,7 @@ export default function OrderDashboard() {
               </Button>
               {renderPagination()}
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() =>
