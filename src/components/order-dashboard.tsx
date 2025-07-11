@@ -2,7 +2,18 @@
 
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, ArrowUpDown, Trash2 } from "lucide-react";
+import {
+  ArrowUpDown,
+  Trash2,
+  MoreVertical,
+  Search,
+  RefreshCw,
+  Columns,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+} from "lucide-react";
 import { type DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
@@ -21,13 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -51,6 +56,12 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { type Order } from "@/lib/types";
 import { orders as initialOrders } from "@/lib/data";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type SortKey = keyof Order;
 
@@ -63,14 +74,17 @@ export default function OrderDashboard() {
   } | null>({ key: "orderDate", direction: "descending" });
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("all");
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+    from: new Date(2025, 5, 16),
+    to: new Date(2025, 5, 26),
+  });
   const [rowSelection, setRowSelection] = React.useState<
     Record<string, boolean>
   >({});
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [currentPage, setCurrentPage] = React.useState(4);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 10;
 
   const handleSort = (key: SortKey) => {
     let direction: "ascending" | "descending" = "ascending";
@@ -103,7 +117,6 @@ export default function OrderDashboard() {
         const orderDate = new Date(order.orderDate);
         if (dateRange.from && orderDate < dateRange.from) return false;
         if (dateRange.to) {
-          // include the whole day
           const toDate = new Date(dateRange.to);
           toDate.setHours(23, 59, 59, 999);
           if (orderDate > toDate) return false;
@@ -164,113 +177,114 @@ export default function OrderDashboard() {
 
   const renderSortIcon = (columnKey: SortKey) => {
     if (sortConfig?.key !== columnKey) {
-      return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />;
+      return <ArrowUpDown className="ml-2 h-3 w-3 text-muted-foreground" />;
     }
     return sortConfig.direction === "ascending" ? (
-      <ArrowUpDown className="ml-2 h-4 w-4" />
+      <ArrowUpDown className="ml-2 h-3 w-3" />
     ) : (
-      <ArrowUpDown className="ml-2 h-4 w-4" />
+      <ArrowUpDown className="ml-2 h-3 w-3" />
     );
   };
 
-  const statusBadgeVariant = (
-    status: Order["status"]
-  ): "default" | "secondary" | "outline" => {
+  const getStatusBadgeClass = (status: Order["status"]): string => {
     switch (status) {
       case "Completed":
-        return "default";
+        return "bg-green-100 text-green-800";
       case "New Order":
-        return "secondary";
+        return "bg-blue-100 text-blue-800";
       case "Draft":
-        return "outline";
+        return "bg-gray-100 text-gray-800";
+      case "Cancelled":
+        return "bg-red-100 text-red-800";
+      case "Waiting Process":
+        return "bg-yellow-100 text-yellow-800";
+      case "Rejected":
+        return "bg-red-100 text-red-800";
       default:
-        return "outline";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
+  const renderPagination = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <Button
+          key={i}
+          variant={i === currentPage ? "default" : "ghost"}
+          size="icon"
+          className={`h-8 w-8 ${i === currentPage ? 'bg-primary text-primary-foreground' : ''}`}
+          onClick={() => setCurrentPage(i)}
+        >
+          {i}
+        </Button>
+      );
+    }
+    return pages;
+  };
+
+
   return (
     <>
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold tracking-tight">
-            OrderFlow Dashboard
-          </CardTitle>
-          <CardDescription>
-            Manage and track all customer orders.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className="shadow-lg bg-white p-4">
+        <CardContent className="p-0">
           <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center">
-            <Input
-              placeholder="Search by Order or Customer ID..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
-            />
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Select onValueChange={setStatusFilter} defaultValue="all">
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="New Order">New Order</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Draft">Draft</SelectItem>
-                </SelectContent>
-              </Select>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full sm:w-[260px] justify-start text-left font-normal",
-                      !dateRange && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateRange?.from ? (
-                      dateRange.to ? (
-                        <>
-                          {format(dateRange.from, "LLL dd, y")} -{" "}
-                          {format(dateRange.to, "LLL dd, y")}
-                        </>
-                      ) : (
-                        format(dateRange.from, "LLL dd, y")
-                      )
-                    ) : (
-                      <span>Pick a date range</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={dateRange?.from}
-                    selected={dateRange}
-                    onSelect={setDateRange}
-                    numberOfMonths={2}
-                  />
-                </PopoverContent>
-              </Popover>
+            <div className="relative flex-1 md:grow-0">
+               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+               <Input
+                placeholder="Order Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 w-full md:w-64"
+              />
             </div>
-            <div className="md:ml-auto">
-              {selectedRowsCount > 0 && (
-                <Button
-                  variant="destructive"
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete ({selectedRowsCount})
-                </Button>
-              )}
+            <Select onValueChange={setStatusFilter} defaultValue="all">
+              <SelectTrigger className="w-full md:w-auto">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="New Order">New Order</SelectItem>
+                <SelectItem value="Completed">Completed</SelectItem>
+                <SelectItem value="Draft">Draft</SelectItem>
+                <SelectItem value="Cancelled">Cancelled</SelectItem>
+                <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                <SelectItem value="Rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" size="icon">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon">
+              <Columns className="h-4 w-4" />
+            </Button>
+             <Button variant="outline" size="icon">
+              <FileText className="h-4 w-4" />
+            </Button>
+
+            <div className="ml-auto flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                disabled={selectedRowsCount === 0}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </Button>
+              <Button className="bg-primary hover:bg-primary/90">
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Order
+              </Button>
             </div>
           </div>
           <div className="overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="bg-gray-50">
                   <TableHead className="w-[50px] px-4">
                     <Checkbox
                       checked={
@@ -306,10 +320,10 @@ export default function OrderDashboard() {
                     </div>
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer text-right"
+                    className="cursor-pointer text-left"
                     onClick={() => handleSort("orderDate")}
                   >
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center">
                       Order Date {renderSortIcon("orderDate")}
                     </div>
                   </TableHead>
@@ -329,6 +343,7 @@ export default function OrderDashboard() {
                       Total Amount {renderSortIcon("total")}
                     </div>
                   </TableHead>
+                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -348,25 +363,56 @@ export default function OrderDashboard() {
                       <TableCell className="font-medium">{order.id}</TableCell>
                       <TableCell>{order.customerId}</TableCell>
                       <TableCell>
-                        <Badge variant={statusBadgeVariant(order.status)}>
+                        <Badge
+                          className={cn(
+                            "rounded-md px-2 py-1 text-xs font-semibold",
+                            getStatusBadgeClass(order.status)
+                          )}
+                          variant="outline"
+                        >
                           {order.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
-                        {format(new Date(order.orderDate), "PP")}
+                      <TableCell className="text-left">
+                        {format(new Date(order.orderDate), "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell className="text-right">
                         {order.quantity}
                       </TableCell>
                       <TableCell className="text-right">
-                        ${order.total.toFixed(2)}
+                        {order.total.toLocaleString("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>View Details</DropdownMenuItem>
+                            <DropdownMenuItem>Edit Order</DropdownMenuItem>
+                             <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => {
+                                setRowSelection({ [order.id]: true });
+                                setIsDeleteDialogOpen(true);
+                              }}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={7}
+                      colSpan={8}
                       className="h-24 text-center text-muted-foreground"
                     >
                       No orders found.
@@ -376,31 +422,28 @@ export default function OrderDashboard() {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              {selectedRowsCount} of {orders.length} row(s) selected.
-            </div>
+          <div className="mt-4 flex items-center justify-center">
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">
-                Page {currentPage} of {totalPages > 0 ? totalPages : 1}
-              </span>
               <Button
-                variant="outline"
-                size="sm"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
-                Previous
+                <ChevronLeft className="h-5 w-5" />
               </Button>
+              {renderPagination()}
               <Button
-                variant="outline"
-                size="sm"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages || totalPages === 0}
               >
-                Next
+                <ChevronRight className="h-5 w-5" />
               </Button>
             </div>
           </div>
