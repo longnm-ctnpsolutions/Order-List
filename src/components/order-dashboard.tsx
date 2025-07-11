@@ -211,24 +211,29 @@ export default function OrderDashboard() {
 
   const renderPagination = () => {
     const pages = [];
-    const maxPagesToShow = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    const maxPagesToShow = 8;
+    let startPage = 1;
+    let endPage = totalPages;
 
-    if (endPage - startPage + 1 < maxPagesToShow) {
+    if (totalPages > maxPagesToShow) {
+      startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+      if (endPage - startPage + 1 < maxPagesToShow) {
         startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
     }
-
-
+    
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <Button
           key={i}
-          variant={i === currentPage ? "default" : "ghost"}
+          variant="ghost"
           size="icon"
-          className={`h-8 w-8 ${
-            i === currentPage ? "bg-primary text-primary-foreground" : ""
-          }`}
+          className={cn("h-8 w-8 text-sm", {
+            "text-blue-600 font-bold": i === currentPage,
+            "text-gray-500": i !== currentPage,
+          })}
           onClick={() => setCurrentPage(i)}
         >
           {i}
@@ -493,7 +498,7 @@ export default function OrderDashboard() {
             </div>
             <div className="flex items-center space-x-2">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -503,7 +508,7 @@ export default function OrderDashboard() {
               </Button>
               {renderPagination()}
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() =>
