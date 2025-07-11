@@ -1,4 +1,4 @@
-import { FileArchive, Languages, Menu, Bell, Search, RefreshCw, ViewColumns, Plus, ChevronLeft, ChevronRight, MoreVertical } from "lucide-react";
+import { FileArchive, Menu, Bell } from "lucide-react";
 import OrderDashboard from "@/components/order-dashboard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ export default function Home() {
               <Bell className="h-6 w-6" />
             </Button>
             <Avatar>
-              <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
+              <AvatarImage src="https://i.imgur.com/s6n5s4f.png" data-ai-hint="firebase logo" />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
           </div>
