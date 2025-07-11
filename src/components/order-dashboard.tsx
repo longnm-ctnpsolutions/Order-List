@@ -68,6 +68,14 @@ import { Label } from "@/components/ui/label";
 
 type SortKey = keyof Order;
 
+const formatDateInUTC = (isoDateString: string) => {
+  const date = new Date(isoDateString);
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export default function OrderDashboard() {
   const { toast } = useToast();
   const [orders, setOrders] = React.useState<Order[]>(initialOrders);
@@ -546,7 +554,7 @@ export default function OrderDashboard() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-left">
-                        {format(parseISO(order.orderDate), "dd/MM/yyyy")}
+                        {formatDateInUTC(order.orderDate)}
                       </TableCell>
                       <TableCell className="text-right">
                         {order.quantity}
