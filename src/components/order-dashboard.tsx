@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import {
   ArrowUpDown,
   Trash2,
@@ -121,7 +121,7 @@ export default function OrderDashboard() {
       })
       .filter((order) => {
         if (!dateRange?.from) return true;
-        const orderDate = new Date(order.orderDate);
+        const orderDate = parseISO(order.orderDate);
         if (dateRange.from && orderDate < dateRange.from) return false;
         if (dateRange.to) {
           const toDate = new Date(dateRange.to);
@@ -546,7 +546,7 @@ export default function OrderDashboard() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-left">
-                        {format(new Date(order.orderDate), "dd/MM/yyyy")}
+                        {format(parseISO(order.orderDate), "dd/MM/yyyy")}
                       </TableCell>
                       <TableCell className="text-right">
                         {order.quantity}
