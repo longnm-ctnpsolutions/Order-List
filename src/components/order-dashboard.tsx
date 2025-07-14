@@ -467,7 +467,7 @@ export default function OrderDashboard() {
             </div>
           </div>
 
-          <div className="flex flex-col mobile:flex-row items-start mobile:items-center gap-4">
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Date</span>
               <Popover>
@@ -476,7 +476,7 @@ export default function OrderDashboard() {
                     id="date"
                     variant={"outline"}
                     className={cn(
-                      "w-[260px] justify-start text-left font-normal",
+                      "w-full mobile:w-[260px] justify-start text-left font-normal",
                       !dateRange && "text-muted-foreground"
                     )}
                   >
