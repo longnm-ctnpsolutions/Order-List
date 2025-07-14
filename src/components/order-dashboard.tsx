@@ -14,7 +14,8 @@ import {
   Calendar as CalendarIcon,
   RefreshCw,
   LayoutGrid,
-  FileDown
+  FileDown,
+  Minus
 } from "lucide-react";
 import { type DateRange } from "react-day-picker";
 
@@ -90,9 +91,10 @@ export default function OrderDashboard() {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [currencyFilter, setCurrencyFilter] = React.useState("all");
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
-    undefined
-  );
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+    from: new Date(2025, 5, 16),
+    to: new Date(2025, 5, 26),
+  });
   const [rowSelection, setRowSelection] = React.useState<
     Record<string, boolean>
   >({});
@@ -132,7 +134,8 @@ export default function OrderDashboard() {
         const query = searchQuery.toLowerCase();
         return (
           order.id.toLowerCase().includes(query) ||
-          order.customerId.toLowerCase().includes(query)
+          order.customerId.toLowerCase().includes(query) ||
+          order.temporaryOrderId.toLowerCase().includes(query)
         );
       })
       .filter((order) => {
@@ -226,6 +229,7 @@ export default function OrderDashboard() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const newOrder: Order = {
+      temporaryOrderId: `TEMP-${String(orders.length + 1).padStart(3, '0')}`,
       id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
       customerId: formData.get("customerId") as string,
       status: formData.get("status") as Order["status"],
@@ -234,6 +238,8 @@ export default function OrderDashboard() {
       orderDate: new Date(formData.get("orderDate") as string).toISOString(),
       currency: formData.get("currency") as "USD" | "VND",
       createdAt: new Date().toISOString(),
+      backOrder: 'No',
+      confirmedQuantity: parseInt(formData.get("quantity") as string, 10),
     };
     setOrders([newOrder, ...orders]);
     setIsAddOrderDialogOpen(false);
@@ -445,14 +451,41 @@ export default function OrderDashboard() {
   return (
     <>
       <Card className="shadow-lg bg-white max-w-full overflow-hidden">
-        <CardHeader className="p-4 md:p-6 pb-0">
+        <CardHeader className="p-4 md:p-6 pb-0 md:pb-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Order Tracking</h2>
                  <div className="hidden md:flex ml-auto items-center gap-2">
-                    <Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5"/></Button>
+                    <div className="relative w-full md:w-48">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <Input
+                        placeholder="Order Search"
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setCurrentPage(1);
+                        }}
+                        className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
+                      />
+                    </div>
+                    <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
+                      <SelectTrigger className="w-auto bg-gray-100 border-gray-100">
+                        <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="New Order">New Order</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Draft">Draft</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                        <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                        <SelectItem value="Rejected">Rejected</SelectItem>
+                      </SelectContent>
+                    </Select>
+
                     <Button variant="ghost" size="icon"><RefreshCw className="h-5 w-5"/></Button>
                     <Button variant="ghost" size="icon"><LayoutGrid className="h-5 w-5"/></Button>
                     <Button variant="ghost" size="icon"><FileDown className="h-5 w-5"/></Button>
+                    
                     <Button
                       variant="outline"
                       className="bg-gray-100 border-gray-200"
@@ -462,67 +495,68 @@ export default function OrderDashboard() {
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                     </Button>
+                    
                     <Dialog open={isAddOrderDialogOpen} onOpenChange={setIsAddOrderDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-accent hover:bg-accent/90">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add New Order
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                        <DialogTitle>Add New Order</DialogTitle>
-                        </DialogHeader>
-                        <form onSubmit={handleAddOrder} className="grid gap-4 py-4">
-                        <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
-                            <Label htmlFor="customerId" className="text-right">Customer ID</Label>
-                            <Input id="customerId" name="customerId" required className="col-span-3" />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="status" className="text-right">Status</Label>
-                            <Select name="status" required>
-                            <SelectTrigger className="col-span-3">
-                                <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="New Order">New Order</SelectItem>
-                                <SelectItem value="Completed">Completed</SelectItem>
-                                <SelectItem value="Draft">Draft</SelectItem>
-                                <SelectItem value="Cancelled">Cancelled</SelectItem>
-                                <SelectItem value="Waiting Process">Waiting Process</SelectItem>
-                                <SelectItem value="Rejected">Rejected</SelectItem>
-                            </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="quantity" className="text-right">Quantity</Label>
-                            <Input id="quantity" name="quantity" type="number" required className="col-span-3" />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="total" className="text-right">Total</Label>
-                            <Input id="total" name="total" type="number" step="0.01" required className="col-span-3" />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="orderDate" className="text-right">Order Date</Label>
-                            <Input id="orderDate" name="orderDate" type="date" required className="col-span-3" />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="currency" className="text-right">Currency</Label>
-                            <Select name="currency" required>
-                            <SelectTrigger className="col-span-3">
-                                <SelectValue placeholder="Select currency" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="USD">USD</SelectItem>
-                                <SelectItem value="VND">VND</SelectItem>
-                            </SelectContent>
-                            </Select>
-                        </div>
-                        <DialogFooter>
-                            <Button type="submit">Add Order</Button>
-                        </DialogFooter>
-                        </form>
-                    </DialogContent>
+                      <DialogTrigger asChild>
+                          <Button className="bg-blue-700 hover:bg-blue-800 text-white">
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add New Order
+                          </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                          <DialogHeader>
+                          <DialogTitle>Add New Order</DialogTitle>
+                          </DialogHeader>
+                          <form onSubmit={handleAddOrder} className="grid gap-4 py-4">
+                          <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
+                              <Label htmlFor="customerId" className="text-right">Customer ID</Label>
+                              <Input id="customerId" name="customerId" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="status" className="text-right">Status</Label>
+                              <Select name="status" required>
+                              <SelectTrigger className="col-span-3">
+                                  <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  <SelectItem value="New Order">New Order</SelectItem>
+                                  <SelectItem value="Completed">Completed</SelectItem>
+                                  <SelectItem value="Draft">Draft</SelectItem>
+                                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                  <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                                  <SelectItem value="Rejected">Rejected</SelectItem>
+                              </SelectContent>
+                              </Select>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="quantity" className="text-right">Quantity</Label>
+                              <Input id="quantity" name="quantity" type="number" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="total" className="text-right">Total</Label>
+                              <Input id="total" name="total" type="number" step="0.01" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="orderDate" className="text-right">Order Date</Label>
+                              <Input id="orderDate" name="orderDate" type="date" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="currency" className="text-right">Currency</Label>
+                              <Select name="currency" required>
+                              <SelectTrigger className="col-span-3">
+                                  <SelectValue placeholder="Select currency" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  <SelectItem value="USD">USD</SelectItem>
+                                  <SelectItem value="VND">VND</SelectItem>
+                              </SelectContent>
+                              </Select>
+                          </div>
+                          <DialogFooter>
+                              <Button type="submit">Add Order</Button>
+                          </DialogFooter>
+                          </form>
+                      </DialogContent>
                     </Dialog>
                 </div>
                 <div className="md:hidden">
@@ -530,38 +564,10 @@ export default function OrderDashboard() {
                 </div>
             </div>
         </CardHeader>
-        <CardContent className="p-4 md:p-6 space-y-4">
+        <CardContent className="p-4 md:p-6 pt-0 space-y-4">
           <Separator className="md:hidden -mt-2 mb-4" />
-          <div className="hidden md:flex flex-row md:items-center gap-4">
-              <div className="relative w-full md:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <Input
-                  placeholder="Order Search"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
-                />
-              </div>
-              <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
-                <SelectTrigger className="w-full md:w-auto">
-                  <SelectValue placeholder="All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="New Order">New Order</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Draft">Draft</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                  <SelectItem value="Waiting Process">Waiting Process</SelectItem>
-                  <SelectItem value="Rejected">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center gap-4">
+          
+          <div className="flex flex-col mobile:flex-row items-start mobile:items-center gap-4">
             <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2">
               <span className="text-sm text-muted-foreground">Date</span>
               <Popover>
@@ -603,8 +609,8 @@ export default function OrderDashboard() {
             </div>
             <div className="flex w-full mobile:w-auto items-center gap-2">
               <span className="text-sm text-muted-foreground">Currency</span>
-                <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="all">
-                  <SelectTrigger className="w-full mobile:w-[100px]">
+                <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="VND">
+                  <SelectTrigger className="w-full mobile:w-auto">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -621,46 +627,36 @@ export default function OrderDashboard() {
               <TableHeader>
                 <TableRow className="bg-gray-50 hover:bg-gray-50">
                   <TableHead className="w-[50px] px-4">
-                    <Checkbox
-                      checked={
-                        paginatedOrders.length > 0 &&
-                        selectedRowsCount === paginatedOrders.length
-                      }
-                      onCheckedChange={(value) => handleSelectAll(!!value)}
-                      aria-label="Select all orders"
-                    />
-                  </TableHead>
-                  <TableHead
-                    className="min-w-[120px] cursor-pointer"
-                    onClick={() => handleSort("id")}
-                  >
-                    <div className="flex items-center">
-                      Order ID {renderSortIcon("id")}
+                    <div className="flex items-center justify-center h-5 w-5 rounded-sm border border-primary bg-primary/20">
+                      <Minus className="h-4 w-4 text-primary"/>
                     </div>
                   </TableHead>
-                  <TableHead className="min-w-[150px] cursor-pointer hidden md:table-cell" onClick={() => handleSort("customerId")}>
-                    <div className="flex items-center"> Customer ID {renderSortIcon("customerId")}</div>
+                  <TableHead className="min-w-[150px] cursor-pointer" onClick={() => handleSort("temporaryOrderId")}>
+                    <div className="flex items-center">Temporary Order ID {renderSortIcon("temporaryOrderId")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("status")}
-                  >
-                    <div className="flex items-center">
-                      Status {renderSortIcon("status")}
-                    </div>
+                  <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("id")}>
+                    <div className="flex items-center">Order ID {renderSortIcon("id")}</div>
                   </TableHead>
-                  <TableHead
-                    className="min-w-[120px] cursor-pointer text-left hidden lg:table-cell"
-                    onClick={() => handleSort("orderDate")}
-                  >
-                    <div className="flex items-center">
-                      Order Date {renderSortIcon("orderDate")}
-                    </div>
+                  <TableHead className="min-w-[150px] cursor-pointer" onClick={() => handleSort("customerId")}>
+                    <div className="flex items-center">Customer ID {renderSortIcon("customerId")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[100px] cursor-pointer text-right hidden lg:table-cell" onClick={() => handleSort("quantity")}>
-                    <div className="flex items-center justify-end"> Quantity {renderSortIcon("quantity")}</div>
+                   <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("backOrder")}>
+                    <div className="flex items-center">Back Order {renderSortIcon("backOrder")}</div>
                   </TableHead>
-                  <TableHead className="cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("total")}>
-                    <div className="flex items-center justify-end"> Total Amount {renderSortIcon("total")}</div>
-
+                  <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("status")}>
+                    <div className="flex items-center">Order Status {renderSortIcon("status")}</div>
+                  </TableHead>
+                  <TableHead className="min-w-[120px] cursor-pointer text-left" onClick={() => handleSort("orderDate")}>
+                    <div className="flex items-center">Order Date {renderSortIcon("orderDate")}</div>
+                  </TableHead>
+                  <TableHead className="min-w-[100px] cursor-pointer text-right" onClick={() => handleSort("quantity")}>
+                    <div className="flex items-center justify-end">Ordered Quantity {renderSortIcon("quantity")}</div>
+                  </TableHead>
+                  <TableHead className="min-w-[150px] cursor-pointer text-right" onClick={() => handleSort("confirmedQuantity")}>
+                    <div className="flex items-center justify-end">Confirmed Quantity {renderSortIcon("confirmedQuantity")}</div>
+                  </TableHead>
+                  <TableHead className="cursor-pointer text-right" onClick={() => handleSort("total")}>
+                    <div className="flex items-center justify-end">Total Amount (Incl. VAT) {renderSortIcon("total")}</div>
                   </TableHead>
                   <TableHead className="min-w-[80px] text-right">Actions</TableHead>
                 </TableRow>
@@ -680,8 +676,10 @@ export default function OrderDashboard() {
                           aria-label={`Select order ${order.id}`}
                         />
                       </TableCell>
+                       <TableCell className="font-medium">{order.temporaryOrderId}</TableCell>
                       <TableCell className="font-medium">{order.id}</TableCell>
-                      <TableCell className="hidden md:table-cell">{order.customerId}</TableCell>
+                      <TableCell>{order.customerId}</TableCell>
+                       <TableCell>{order.backOrder}</TableCell>
                       <TableCell>
                         <Badge
                           className={cn(
@@ -693,9 +691,10 @@ export default function OrderDashboard() {
                           {order.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-left hidden lg:table-cell">{formatDateInUTC(order.orderDate)}</TableCell>
-                      <TableCell className="text-right hidden lg:table-cell">{order.quantity}</TableCell>
-                      <TableCell className="text-right hidden md:table-cell">
+                      <TableCell className="text-left">{formatDateInUTC(order.orderDate)}</TableCell>
+                      <TableCell className="text-right">{order.quantity}</TableCell>
+                       <TableCell className="text-right">{order.confirmedQuantity}</TableCell>
+                      <TableCell className="text-right">
                         {order.total.toLocaleString("en-US", {
                           style: "currency",
                           currency: order.currency,
@@ -728,7 +727,7 @@ export default function OrderDashboard() {
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={8}
+                      colSpan={11}
                       className="h-24 text-center text-muted-foreground"
                     >
                       No orders found.
@@ -797,7 +796,3 @@ export default function OrderDashboard() {
     </>
   );
 }
-
-    
-
-    

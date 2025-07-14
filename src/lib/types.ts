@@ -1,4 +1,5 @@
 export type Order = {
+  temporaryOrderId: string;
   id: string;
   customerId: string;
   status:
@@ -13,4 +14,6 @@ export type Order = {
   orderDate: string;
   currency: "VND" | "USD";
   createdAt: string;
+  backOrder: "Yes" | "No";
+  confirmedQuantity: number;
 };
