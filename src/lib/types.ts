@@ -14,6 +14,6 @@ export type Order = {
   orderDate: string;
   currency: "VND" | "USD";
   createdAt: string;
-  backOrder: "Yes" | "No";
+  backOrder: "Yes" | "No" | "Partial BO" | "Full BO";
   confirmedQuantity: number;
 };
