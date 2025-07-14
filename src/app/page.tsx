@@ -1,4 +1,4 @@
-import { FileArchive, Menu, Bell, MoreHorizontal } from "lucide-react";
+import { FileArchive, Menu, Bell } from "lucide-react";
 import OrderDashboard from "@/components/order-dashboard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 export default function Home() {
   return (
     <div className="flex h-screen bg-gray-100">
-      <aside className="w-16 bg-white flex-col items-center py-4 hidden md:flex">
+      <aside className="w-16 bg-white flex-col items-center py-4 hidden lg:flex">
         <div className="flex flex-col items-center space-y-6">
           <Button variant="ghost" size="icon">
             <Menu className="h-6 w-6" />
@@ -23,7 +23,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button variant="ghost" size="icon" className="lg:hidden">
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
@@ -41,11 +41,11 @@ export default function Home() {
                 </div>
               </SheetContent>
             </Sheet>
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
               <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={140} height={20} />
             </div>
           </div>
-          <div className="md:hidden">
+          <div className="lg:hidden">
              <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={120} height={18} />
           </div>
           <div className="flex items-center space-x-2 md:space-x-4">

@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import {
   ArrowUpDown,
   Trash2,
@@ -12,7 +12,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar as CalendarIcon,
-  MoreHorizontal,
 } from "lucide-react";
 import { type DateRange } from "react-day-picker";
 
@@ -97,7 +96,6 @@ export default function OrderDashboard() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
-  const [isMobileContentVisible, setIsMobileContentVisible] = React.useState(true);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -293,7 +291,7 @@ export default function OrderDashboard() {
   };
 
   const MobileActions = () => (
-    <div className="md:hidden ml-auto">
+    <div className="lg:hidden ml-auto">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -358,7 +356,7 @@ export default function OrderDashboard() {
         <CardHeader className="p-4 md:p-6 pb-0">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Order Tracking</h2>
-                 <div className="hidden md:flex ml-auto items-center gap-2">
+                 <div className="hidden lg:flex ml-auto items-center gap-2">
                     <Button
                     variant="outline"
                     className="bg-gray-100 border-gray-200"
@@ -431,14 +429,14 @@ export default function OrderDashboard() {
                     </DialogContent>
                     </Dialog>
                 </div>
-                <div className="md:hidden">
+                <div className="lg:hidden">
                     <MobileActions />
                 </div>
             </div>
         </CardHeader>
         <CardContent className="p-4 md:p-6 space-y-4">
-          <Separator className="md:hidden -mt-2 mb-4" />
-          <div className="hidden md:flex flex-col md:flex-row md:items-center gap-4">
+          <Separator className="lg:hidden -mt-2 mb-4" />
+          <div className="hidden lg:flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex flex-wrap items-center gap-4 w-full">
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -556,14 +554,14 @@ export default function OrderDashboard() {
                     </div>
                   </TableHead>
                   <TableHead
-                    className="min-w-[120px] cursor-pointer text-left hidden md:table-cell"
+                    className="min-w-[120px] cursor-pointer text-left hidden lg:table-cell"
                     onClick={() => handleSort("orderDate")}
                   >
                     <div className="flex items-center">
                       Order Date {renderSortIcon("orderDate")}
                     </div>
                   </TableHead>
-                  <TableHead className="min-w-[100px] cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("quantity")}>
+                  <TableHead className="min-w-[100px] cursor-pointer text-right hidden lg:table-cell" onClick={() => handleSort("quantity")}>
                     <div className="flex items-center justify-end"> Quantity {renderSortIcon("quantity")}</div>
                   </TableHead>
                   <TableHead className="cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("total")}>
@@ -601,8 +599,8 @@ export default function OrderDashboard() {
                           {order.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-left hidden md:table-cell">{formatDateInUTC(order.orderDate)}</TableCell>
-                      <TableCell className="text-right hidden md:table-cell">{order.quantity}</TableCell>
+                      <TableCell className="text-left hidden lg:table-cell">{formatDateInUTC(order.orderDate)}</TableCell>
+                      <TableCell className="text-right hidden lg:table-cell">{order.quantity}</TableCell>
                       <TableCell className="text-right hidden md:table-cell">
                         {order.total.toLocaleString("en-US", {
                           style: "currency",
