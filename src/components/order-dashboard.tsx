@@ -510,7 +510,7 @@ export default function OrderDashboard() {
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Currency</span>
                 <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="all">
-                  <SelectTrigger className="w-full md:w-[100px]">
+                  <SelectTrigger className="w-full mobile:w-[100px]">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
