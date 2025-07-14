@@ -431,13 +431,15 @@ export default function OrderDashboard() {
                     </DialogContent>
                     </Dialog>
                 </div>
-                <MobileActions />
+                <div className="md:hidden">
+                    <MobileActions />
+                </div>
             </div>
         </CardHeader>
         <CardContent className="p-4 md:p-6 space-y-4">
           <Separator className="md:hidden -mt-2 mb-4" />
-          <div className="flex flex-col md:flex-row md:items-center gap-4">
-            <div className="hidden md:flex flex-wrap items-center gap-4 w-full">
+          <div className="hidden md:flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4 w-full">
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                 <Input

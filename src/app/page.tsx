@@ -67,12 +67,6 @@ export default function Home() {
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold">Order Tracking</h1>
-            <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-6 w-6" />
-            </Button>
-          </div>
           <OrderDashboard />
         </main>
       </div>
