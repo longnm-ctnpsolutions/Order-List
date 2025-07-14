@@ -102,14 +102,16 @@ export default function OrderDashboard() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
+  const [isTablet, setIsTablet] = React.useState(false);
 
   React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 440);
+      setIsTablet(window.innerWidth >= 440 && window.innerWidth < 770);
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const ITEMS_PER_PAGE = 10;
@@ -281,8 +283,8 @@ export default function OrderDashboard() {
 
   const renderPagination = () => {
     const pages = [];
-    const maxPagesToShow = isMobile ? 3 : 5;
-    
+    const maxPagesToShow = isMobile ? 3 : (isTablet ? 4 : 5); 
+
     if (totalPages <= maxPagesToShow) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(
@@ -301,49 +303,25 @@ export default function OrderDashboard() {
         );
       }
     } else {
-      let startPage, endPage;
+      let startPage, endPage; 
+      
       if (isMobile) {
-        startPage = Math.max(1, currentPage - 1);
-        endPage = Math.min(totalPages, currentPage + 1);
-        if (currentPage === 1) {
-            startPage = 1;
-            endPage = 3;
-        } else if (currentPage === totalPages) {
-            startPage = totalPages - 2;
-            endPage = totalPages;
-        }
-      } else {
-        pages.push(
-            <Button
-              key={1}
-              variant="ghost"
-              size="icon"
-              className={cn("h-8 w-8 text-sm", {
-                "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": 1 === currentPage,
-                "text-gray-500": 1 !== currentPage,
-              })}
-              onClick={() => setCurrentPage(1)}
-            >
-              1
-            </Button>
-          );
-        if (currentPage > 3) {
-            pages.push(<span key="start-ellipsis" className="px-2">...</span>);
-        }
-        
-        startPage = Math.max(2, currentPage - 1);
-        endPage = Math.min(totalPages - 1, currentPage + 1);
-
-        if (currentPage <= 3) {
-            startPage = 2;
-            endPage = 4;
-        }
-        if (currentPage >= totalPages - 2) {
-            startPage = totalPages - 3;
-            endPage = totalPages - 1;
+        if (currentPage <= 2) {
+          startPage = 1;
+          endPage = 3;
+        } else if (currentPage >= totalPages - 1) {
+          startPage = totalPages - 2;
+          endPage = totalPages;
+        } else {
+          startPage = currentPage - 1;
+          endPage = currentPage + 1;
         }
 
-         for (let i = startPage; i <= endPage; i++) {
+        if (startPage > 1) {
+          pages.push(<span key="start-ellipsis" className="px-2">...</span>);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
           pages.push(
             <Button
               key={i}
@@ -360,13 +338,62 @@ export default function OrderDashboard() {
           );
         }
 
+        if (endPage < totalPages) {
+          pages.push(<span key="end-ellipsis" className="px-2">...</span>);
+        }
+
+      } else {
+        pages.push(
+            <Button
+              key={1}
+              variant="ghost"
+              className={cn("h-8 w-8 text-sm", {
+                "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": 1 === currentPage,
+                "text-gray-500": 1 !== currentPage,
+              })}
+              onClick={() => setCurrentPage(1)}
+            >
+              1
+            </Button>
+          );
+        if (currentPage > 3) {
+          pages.push(<span key="start-ellipsis" className="px-2">...</span>);
+        }
+
+        startPage = Math.max(2, currentPage - 1);
+        endPage = Math.min(totalPages - 1, currentPage + 1);
+
+        if (currentPage <= 3) {
+            startPage = 2;
+            endPage = 4;
+        }
+        if (currentPage >= totalPages - 2) {
+          startPage = Math.max(2, totalPages - 3);
+          endPage = totalPages - 1;
+        }
+
+         for (let i = startPage; i <= endPage; i++) {
+          pages.push(
+            <Button
+              key={i}
+              variant="ghost"
+              className={cn("h-8 w-8 text-sm", {
+                "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": i === currentPage,
+                "text-gray-500": i !== currentPage,
+              })}
+              onClick={() => setCurrentPage(i)}
+            >
+              {i}
+            </Button>
+          );
+        }
+
         if (currentPage < totalPages - 2) {
-            pages.push(<span key="end-ellipsis" className="px-2">...</span>);
+          pages.push(<span key="end-ellipsis" className="px-2">...</span>);
         }
         pages.push(
             <Button
             key={totalPages}
-            variant="ghost"
             size="icon"
             className={cn("h-8 w-8 text-sm", {
                 "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": totalPages === currentPage,
@@ -385,9 +412,9 @@ export default function OrderDashboard() {
   };
 
   const MobileActions = () => (
-    <div className="md:hidden ml-auto">
+ <div className="block md:hidden ml-auto">
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild >
                 <Button variant="ghost" size="icon">
                     <MoreVertical className="h-6 w-6" />
                 </Button>
@@ -441,6 +468,7 @@ export default function OrderDashboard() {
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
+
     </div>
   );
 
@@ -448,36 +476,9 @@ export default function OrderDashboard() {
     <>
       <Card className="shadow-lg bg-white max-w-full overflow-hidden">
         <CardHeader className="p-4 md:p-6 pb-0 md:pb-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between w-full">
                 <h2 className="text-xl font-semibold">Order Tracking</h2>
-                 <div className="hidden md:flex ml-auto items-center gap-2">
-                    <div className="relative w-full md:w-48">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                      <Input
-                        placeholder="Order Search"
-                        value={searchQuery}
-                        onChange={(e) => {
-                          setSearchQuery(e.target.value);
-                          setCurrentPage(1);
-                        }}
-                        className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
-                      />
-                    </div>
-                    <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
-                      <SelectTrigger className="w-auto bg-gray-100 border-gray-100">
-                        <SelectValue placeholder="All" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="New Order">New Order</SelectItem>
-                        <SelectItem value="Completed">Completed</SelectItem>
-                        <SelectItem value="Draft">Draft</SelectItem>
-                        <SelectItem value="Cancelled">Cancelled</SelectItem>
-                        <SelectItem value="Waiting Process">Waiting Process</SelectItem>
-                        <SelectItem value="Rejected">Rejected</SelectItem>
-                      </SelectContent>
-                    </Select>
-
+ <div className="hidden md:flex ml-auto items-center gap-2">
                     <Button variant="ghost" size="icon"><RefreshCw className="h-5 w-5"/></Button>
                     <Button variant="ghost" size="icon"><LayoutGrid className="h-5 w-5"/></Button>
                     <Button variant="ghost" size="icon"><FileDown className="h-5 w-5"/></Button>
@@ -553,9 +554,9 @@ export default function OrderDashboard() {
                           </DialogFooter>
                           </form>
                       </DialogContent>
-                    </Dialog>
-                </div>
-                <div className="md:hidden">
+ </Dialog>
+ </div>
+ <div className="md:hidden">
                     <MobileActions />
                 </div>
             </div>
@@ -564,48 +565,79 @@ export default function OrderDashboard() {
           <Separator className="md:hidden -mt-2 mb-4" />
           
           <div className="flex flex-col mobile:flex-row items-start mobile:items-center gap-4">
-            <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2">
-              <span className="text-sm text-muted-foreground hidden mobile:inline">Date</span>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="date"
-                    variant={"outline"}
-                    className={cn(
-                      "w-full mobile:w-[260px] justify-start text-left font-normal",
-                      !dateRange && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateRange?.from ? (
-                      dateRange.to ? (
-                        <>
-                          {format(dateRange.from, "dd/MM/y")} →{" "}
-                          {format(dateRange.to, "dd/MM/y")}
-                        </>
+            <div className="flex-col mobile:flex-row items-start mobile:items-center gap-2 date-range-picker-container w-full flex">
+              <div className="hidden md:flex items-center gap-2 w-full">
+                  <div className="relative w-full md:w-64">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <Input
+                        placeholder="Order Search"
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setCurrentPage(1);
+                        }}
+                        className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
+                      />
+                  </div>
+                  <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
+                      <SelectTrigger className="w-auto bg-gray-100 border-gray-100">
+                        <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="New Order">New Order</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Draft">Draft</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                        <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                        <SelectItem value="Rejected">Rejected</SelectItem>
+                      </SelectContent>
+                  </Select>
+              </div>
+
+              <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2">
+                <span className="text-sm text-muted-foreground hidden mobile:inline">Date</span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="date"
+                      variant={"outline"}
+                      className={cn(
+                        "w-full mobile:w-[260px] justify-start text-left font-normal",
+                        !dateRange && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateRange?.from ? (
+                        dateRange.to ? (
+                          <>
+                            {format(dateRange.from, "dd/MM/y")} →{" "}
+                            {format(dateRange.to, "dd/MM/y")}
+                          </>
+                        ) : (
+                          format(dateRange.from, "dd/MM/y")
+                        )
                       ) : (
-                        format(dateRange.from, "dd/MM/y")
-                      )
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={dateRange?.from}
-                    selected={dateRange}
-                    onSelect={(range) => { setDateRange(range); setCurrentPage(1); }}
-                    numberOfMonths={2}
-                  />
-                </PopoverContent>
-              </Popover>
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      initialFocus
+                      mode="range"
+                      defaultMonth={dateRange?.from}
+                      selected={dateRange}
+                      onSelect={(range) => { setDateRange(range); setCurrentPage(1); }}
+                      numberOfMonths={2}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
             <div className="flex w-full mobile:w-auto items-center gap-2">
               <span className="text-sm text-muted-foreground hidden mobile:inline">Currency</span>
-                <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="VND">
+                <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="all">
                   <SelectTrigger className="w-full mobile:w-auto">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
@@ -621,7 +653,7 @@ export default function OrderDashboard() {
           <div className="overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50 hover:bg-gray-50">
+                <TableRow className="bg-gray-50 hover:bg-gray-50 w-full">
                   <TableHead className="w-[50px] px-4">
                     <div className="flex items-center justify-center h-5 w-5 rounded-sm border border-primary bg-primary/20">
                       <Minus className="h-4 w-4 text-primary"/>
@@ -645,10 +677,10 @@ export default function OrderDashboard() {
                   <TableHead className="min-w-[120px] cursor-pointer text-left hidden md:table-cell" onClick={() => handleSort("orderDate")}>
                     <div className="flex items-center">Order Date {renderSortIcon("orderDate")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[100px] cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("quantity")}>
+                  <TableHead className="min-w-[100px] cursor-pointer text-right hidden lg:table-cell" onClick={() => handleSort("quantity")}>
                     <div className="flex items-center justify-end">Ordered Quantity {renderSortIcon("quantity")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[150px] cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("confirmedQuantity")}>
+                  <TableHead className="min-w-[150px] cursor-pointer text-right hidden lg:table-cell" onClick={() => handleSort("confirmedQuantity")}>
                     <div className="flex items-center justify-end">Confirmed Quantity {renderSortIcon("confirmedQuantity")}</div>
                   </TableHead>
                   <TableHead className="cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("total")}>
@@ -687,8 +719,8 @@ export default function OrderDashboard() {
                           {order.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-left hidden md:table-cell">{formatDateInUTC(order.orderDate)}</TableCell>
-                      <TableCell className="text-right hidden md:table-cell">{order.quantity}</TableCell>
+                      <TableCell className="text-left hidden md:table-cell min-w-[150px]">{formatDateInUTC(order.orderDate)}</TableCell>
+                      <TableCell className="text-right hidden lg:table-cell">{order.quantity}</TableCell>
                        <TableCell className="text-right hidden md:table-cell">{order.confirmedQuantity}</TableCell>
                       <TableCell className="text-right hidden md:table-cell">
                         {order.total.toLocaleString("en-US", {
@@ -792,5 +824,3 @@ export default function OrderDashboard() {
     </>
   );
 }
-
-    
