@@ -8,12 +8,9 @@ import {
   Trash2,
   MoreVertical,
   Search,
-  RefreshCw,
-  Columns,
   Plus,
   ChevronLeft,
   ChevronRight,
-  FileText,
   Calendar as CalendarIcon,
   MoreHorizontal,
 } from "lucide-react";
@@ -35,7 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -69,6 +66,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 type SortKey = keyof Order;
 
@@ -99,7 +97,7 @@ export default function OrderDashboard() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
-  const [isMobileContentVisible, setIsMobileContentVisible] = React.useState(true); // State to control visibility
+  const [isMobileContentVisible, setIsMobileContentVisible] = React.useState(true);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -134,7 +132,7 @@ export default function OrderDashboard() {
       })
       .filter((order) => {
         if (!dateRange?.from) return true;
-        const orderDate = parseISO(order.orderDate);
+        const orderDate = new Date(order.orderDate);
         if (dateRange.from && orderDate < dateRange.from) return false;
         if (dateRange.to) {
           const toDate = new Date(dateRange.to);
@@ -299,7 +297,7 @@ export default function OrderDashboard() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
-                    <MoreHorizontal className="h-6 w-6" />
+                    <MoreVertical className="h-6 w-6" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="p-2">
@@ -357,17 +355,88 @@ export default function OrderDashboard() {
   return (
     <>
       <Card className="shadow-lg bg-white max-w-full overflow-hidden">
-        <CardContent className="p-4 md:p-6 space-y-4">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            {/* Order Tracking Title with Options Icon for Mobile */}
-            <div className="flex items-center justify-between w-full md:hidden">
-              <h2 className="text-xl font-semibold">Order Tracking</h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileContentVisible(!isMobileContentVisible)}>
-                <MoreVertical className="h-6 w-6" />
-              </Button>
+        <CardHeader className="p-4 md:p-6 pb-0">
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Order Tracking</h2>
+                 <div className="hidden md:flex ml-auto items-center gap-2">
+                    <Button
+                    variant="outline"
+                    className="bg-gray-100 border-gray-200"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    disabled={selectedRowsCount === 0}
+                    >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                    </Button>
+                    <Dialog open={isAddOrderDialogOpen} onOpenChange={setIsAddOrderDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button className="bg-accent hover:bg-accent/90">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add New Order
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                        <DialogTitle>Add New Order</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleAddOrder} className="grid gap-4 py-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
+                            <Label htmlFor="customerId" className="text-right">Customer ID</Label>
+                            <Input id="customerId" name="customerId" required className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="status" className="text-right">Status</Label>
+                            <Select name="status" required>
+                            <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="New Order">New Order</SelectItem>
+                                <SelectItem value="Completed">Completed</SelectItem>
+                                <SelectItem value="Draft">Draft</SelectItem>
+                                <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                                <SelectItem value="Rejected">Rejected</SelectItem>
+                            </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="quantity" className="text-right">Quantity</Label>
+                            <Input id="quantity" name="quantity" type="number" required className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="total" className="text-right">Total</Label>
+                            <Input id="total" name="total" type="number" step="0.01" required className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="orderDate" className="text-right">Order Date</Label>
+                            <Input id="orderDate" name="orderDate" type="date" required className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="currency" className="text-right">Currency</Label>
+                            <Select name="currency" required>
+                            <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select currency" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="USD">USD</SelectItem>
+                                <SelectItem value="VND">VND</SelectItem>
+                            </SelectContent>
+                            </Select>
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit">Add Order</Button>
+                        </DialogFooter>
+                        </form>
+                    </DialogContent>
+                    </Dialog>
+                </div>
+                <MobileActions />
             </div>
-
-            {/* Desktop and Tablet Filters */}
+        </CardHeader>
+        <CardContent className="p-4 md:p-6 space-y-4">
+          <Separator className="md:hidden -mt-2 mb-4" />
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="hidden md:flex flex-wrap items-center gap-4 w-full">
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -395,89 +464,11 @@ export default function OrderDashboard() {
                   <SelectItem value="Rejected">Rejected</SelectItem>
                 </SelectContent>
               </Select>
-
-              <div className="ml-auto flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  className="bg-gray-100 border-gray-200"
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                  disabled={selectedRowsCount === 0}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
-                <Dialog open={isAddOrderDialogOpen} onOpenChange={setIsAddOrderDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-accent hover:bg-accent/90">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add New Order
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add New Order</DialogTitle>
-                    </DialogHeader>
-                    <form onSubmit={handleAddOrder} className="grid gap-4 py-4">
-                      <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
-                        <Label htmlFor="customerId" className="text-right">Customer ID</Label>
-                        <Input id="customerId" name="customerId" required className="col-span-3" />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="status" className="text-right">Status</Label>
-                        <Select name="status" required>
-                          <SelectTrigger className="col-span-3">
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="New Order">New Order</SelectItem>
-                            <SelectItem value="Completed">Completed</SelectItem>
-                            <SelectItem value="Draft">Draft</SelectItem>
-                            <SelectItem value="Cancelled">Cancelled</SelectItem>
-                            <SelectItem value="Waiting Process">Waiting Process</SelectItem>
-                            <SelectItem value="Rejected">Rejected</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="quantity" className="text-right">Quantity</Label>
-                        <Input id="quantity" name="quantity" type="number" required className="col-span-3" />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="total" className="text-right">Total</Label>
-                        <Input id="total" name="total" type="number" step="0.01" required className="col-span-3" />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="orderDate" className="text-right">Order Date</Label>
-                        <Input id="orderDate" name="orderDate" type="date" required className="col-span-3" />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="currency" className="text-right">Currency</Label>
-                        <Select name="currency" required>
-                          <SelectTrigger className="col-span-3">
-                            <SelectValue placeholder="Select currency" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="USD">USD</SelectItem>
-                            <SelectItem value="VND">VND</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit">Add Order</Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </div>
             </div>
-             {/* Mobile Filters and Actions */}
-            <MobileActions />
           </div>
 
-          {/* Main content - toggled visibility on mobile */}
-          <div className={cn("flex flex-col gap-4", { "hidden md:flex": !isMobileContentVisible })}>
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Date</span>
               <Popover>
                 <PopoverTrigger asChild>
@@ -516,10 +507,10 @@ export default function OrderDashboard() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Currency</span>
                 <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="all">
-                  <SelectTrigger className="w-full md:w-auto">
+                  <SelectTrigger className="w-full md:w-[100px]">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -653,7 +644,6 @@ export default function OrderDashboard() {
               </TableBody>
             </Table>
           </div>
-          </div> {/* End of main content toggle */}
           <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
               {selectedRowsCount > 0
@@ -713,5 +703,3 @@ export default function OrderDashboard() {
     </>
   );
 }
-
-    
