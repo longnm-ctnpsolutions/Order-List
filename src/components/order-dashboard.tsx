@@ -99,6 +99,7 @@ export default function OrderDashboard() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
+  const [isMobileContentVisible, setIsMobileContentVisible] = React.useState(true); // State to control visibility
 
   const ITEMS_PER_PAGE = 10;
 
@@ -358,6 +359,14 @@ export default function OrderDashboard() {
       <Card className="shadow-lg bg-white max-w-full overflow-hidden">
         <CardContent className="p-4 md:p-6 space-y-4">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            {/* Order Tracking Title with Options Icon for Mobile */}
+            <div className="flex items-center justify-between w-full md:hidden">
+              <h2 className="text-xl font-semibold">Order Tracking</h2>
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileContentVisible(!isMobileContentVisible)}>
+                <MoreVertical className="h-6 w-6" />
+              </Button>
+            </div>
+
             {/* Desktop and Tablet Filters */}
             <div className="hidden md:flex flex-wrap items-center gap-4 w-full">
               <div className="relative w-full md:w-64">
@@ -464,6 +473,9 @@ export default function OrderDashboard() {
              {/* Mobile Filters and Actions */}
             <MobileActions />
           </div>
+
+          {/* Main content - toggled visibility on mobile */}
+          <div className={cn("flex flex-col gap-4", { "hidden md:flex": !isMobileContentVisible })}>
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
               <span className="text-sm text-muted-foreground">Date</span>
@@ -518,6 +530,7 @@ export default function OrderDashboard() {
                 </Select>
             </div>
           </div>
+
           <div className="overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
@@ -640,6 +653,7 @@ export default function OrderDashboard() {
               </TableBody>
             </Table>
           </div>
+          </div> {/* End of main content toggle */}
           <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
               {selectedRowsCount > 0
@@ -699,3 +713,5 @@ export default function OrderDashboard() {
     </>
   );
 }
+
+    
