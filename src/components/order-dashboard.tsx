@@ -308,8 +308,7 @@ export default function OrderDashboard() {
         if (currentPage === 1) {
             startPage = 1;
             endPage = 3;
-        }
-        if (currentPage === totalPages) {
+        } else if (currentPage === totalPages) {
             startPage = totalPages - 2;
             endPage = totalPages;
         }
@@ -343,27 +342,24 @@ export default function OrderDashboard() {
             startPage = totalPages - 3;
             endPage = totalPages - 1;
         }
-      }
 
+         for (let i = startPage; i <= endPage; i++) {
+          pages.push(
+            <Button
+              key={i}
+              variant="ghost"
+              size="icon"
+              className={cn("h-8 w-8 text-sm", {
+                "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": i === currentPage,
+                "text-gray-500": i !== currentPage,
+              })}
+              onClick={() => setCurrentPage(i)}
+            >
+              {i}
+            </Button>
+          );
+        }
 
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(
-          <Button
-            key={i}
-            variant="ghost"
-            size="icon"
-            className={cn("h-8 w-8 text-sm", {
-              "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": i === currentPage,
-              "text-gray-500": i !== currentPage,
-            })}
-            onClick={() => setCurrentPage(i)}
-          >
-            {i}
-          </Button>
-        );
-      }
-
-      if (!isMobile) {
         if (currentPage < totalPages - 2) {
             pages.push(<span key="end-ellipsis" className="px-2">...</span>);
         }
@@ -567,16 +563,16 @@ export default function OrderDashboard() {
         <CardContent className="p-4 md:p-6 pt-0 space-y-4">
           <Separator className="md:hidden -mt-2 mb-4" />
           
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="flex flex-col mobile:flex-row items-start mobile:items-center gap-4">
             <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2">
-              <span className="text-sm text-muted-foreground hidden md:inline">Date</span>
+              <span className="text-sm text-muted-foreground hidden mobile:inline">Date</span>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     id="date"
                     variant={"outline"}
                     className={cn(
-                      "w-full md:w-[260px] justify-start text-left font-normal",
+                      "w-full mobile:w-[260px] justify-start text-left font-normal",
                       !dateRange && "text-muted-foreground"
                     )}
                   >
@@ -607,10 +603,10 @@ export default function OrderDashboard() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="flex w-full md:w-auto items-center gap-2">
-              <span className="text-sm text-muted-foreground hidden md:inline">Currency</span>
+            <div className="flex w-full mobile:w-auto items-center gap-2">
+              <span className="text-sm text-muted-foreground hidden mobile:inline">Currency</span>
                 <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="VND">
-                  <SelectTrigger className="w-full md:w-auto">
+                  <SelectTrigger className="w-full mobile:w-auto">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -796,3 +792,5 @@ export default function OrderDashboard() {
     </>
   );
 }
+
+    
