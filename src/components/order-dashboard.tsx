@@ -102,12 +102,10 @@ export default function OrderDashboard() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
-  const [isTablet, setIsTablet] = React.useState(false);
-
+  
   React.useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
     };
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
@@ -415,65 +413,111 @@ export default function OrderDashboard() {
   };
 
   const MobileActions = () => (
- <div className="block md:hidden ml-auto">
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild >
-                <Button variant="ghost" size="icon">
-                    <MoreVertical className="h-6 w-6" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="p-2">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <div className="p-2 space-y-4">
-                    <div className="relative w-full">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input
-                            placeholder="Order Search"
-                            value={searchQuery}
-                            onChange={(e) => {
-                                setSearchQuery(e.target.value);
-                                setCurrentPage(1);
-                            }}
-                            className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
-                        />
-                    </div>
-                    <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="New Order">New Order</SelectItem>
-                            <SelectItem value="Completed">Completed</SelectItem>
-                            <SelectItem value="Draft">Draft</SelectItem>
-                            <SelectItem value="Cancelled">Cancelled</SelectItem>
-                            <SelectItem value="Waiting Process">Waiting Process</SelectItem>
-                            <SelectItem value="Rejected">Rejected</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    className="flex items-center gap-2"
-                    onSelect={() => setIsAddOrderDialogOpen(true)}
-                >
-                    <Plus className="h-4 w-4" />
-                    Add New Order
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    className="flex items-center gap-2 text-red-600"
-                    onSelect={() => setIsDeleteDialogOpen(true)}
-                    disabled={selectedRowsCount === 0}
-                >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-
+    <div className="block md:hidden ml-auto">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild >
+          <Button variant="ghost" size="icon">
+            <MoreVertical className="h-6 w-6" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="p-2">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <div className="p-2 space-y-4">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <Input
+                placeholder="Order Search"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
+              />
+            </div>
+            <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="New Order">New Order</SelectItem>
+                <SelectItem value="Completed">Completed</SelectItem>
+                <SelectItem value="Draft">Draft</SelectItem>
+                <SelectItem value="Cancelled">Cancelled</SelectItem>
+                <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                <SelectItem value="Rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onSelect={() => setIsAddOrderDialogOpen(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Add New Order
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex items-center gap-2 text-red-600"
+            onSelect={() => setIsDeleteDialogOpen(true)}
+            disabled={selectedRowsCount === 0}
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
+  
+  const TabletActions = () => (
+    <div className="hidden md:flex lg:hidden ml-auto">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <MoreVertical className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <div className="p-2 space-y-2">
+            <div className="relative w-full">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input
+                    placeholder="Order Search"
+                    value={searchQuery}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                    className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
+                />
+            </div>
+            <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
+                <SelectTrigger className="w-full bg-gray-100 border-gray-100">
+                    <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="New Order">New Order</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                    <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                    <SelectItem value="Rejected">Rejected</SelectItem>
+                </SelectContent>
+            </Select>
+          </div>
+          <DropdownMenuSeparator/>
+          <DropdownMenuItem><RefreshCw className="mr-2 h-4 w-4"/> Refresh</DropdownMenuItem>
+          <DropdownMenuItem><LayoutGrid className="mr-2 h-4 w-4"/> Layout</DropdownMenuItem>
+          <DropdownMenuItem><FileDown className="mr-2 h-4 w-4"/> Download</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+
 
   return (
     <>
@@ -481,7 +525,9 @@ export default function OrderDashboard() {
         <CardHeader className="p-4 md:p-6 pb-0 md:pb-4">
             <div className="flex items-center justify-between w-full">
                 <h2 className="text-xl font-semibold">Order Tracking</h2>
-                 <div className="hidden md:flex ml-auto items-center gap-2">
+                
+                {/* Desktop Actions */}
+                 <div className="hidden lg:flex ml-auto items-center gap-2">
                     <div className="relative w-auto">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                       <Input
@@ -584,6 +630,84 @@ export default function OrderDashboard() {
                       </DialogContent>
                     </Dialog>
                  </div>
+                 
+                 {/* Tablet Actions */}
+                 <div className="hidden md:flex lg:hidden ml-auto items-center gap-2">
+                    <TabletActions />
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      disabled={selectedRowsCount === 0}
+                    >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                    </Button>
+                    <Dialog open={isAddOrderDialogOpen} onOpenChange={setIsAddOrderDialogOpen}>
+                      <DialogTrigger asChild>
+                          <Button className="bg-blue-700 hover:bg-blue-800 text-white">
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add New Order
+                          </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                          {/* Add Order Form is the same as desktop */}
+                           <DialogHeader>
+                          <DialogTitle>Add New Order</DialogTitle>
+                          </DialogHeader>
+                          <form onSubmit={handleAddOrder} className="grid gap-4 py-4">
+                          <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
+                              <Label htmlFor="customerId" className="text-right">Customer ID</Label>
+                              <Input id="customerId" name="customerId" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="status" className="text-right">Status</Label>
+                              <Select name="status" required>
+                              <SelectTrigger className="col-span-3">
+                                  <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  <SelectItem value="New Order">New Order</SelectItem>
+                                  <SelectItem value="Completed">Completed</SelectItem>
+                                  <SelectItem value="Draft">Draft</SelectItem>
+                                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                  <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                                  <SelectItem value="Rejected">Rejected</SelectItem>
+                              </SelectContent>
+                              </Select>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="quantity" className="text-right">Quantity</Label>
+                              <Input id="quantity" name="quantity" type="number" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="total" className="text-right">Total</Label>
+                              <Input id="total" name="total" type="number" step="0.01" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="orderDate" className="text-right">Order Date</Label>
+                              <Input id="orderDate" name="orderDate" type="date" required className="col-span-3" />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="currency" className="text-right">Currency</Label>
+                              <Select name="currency" required>
+                              <SelectTrigger className="col-span-3">
+                                  <SelectValue placeholder="Select currency" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  <SelectItem value="USD">USD</SelectItem>
+                                  <SelectItem value="VND">VND</SelectItem>
+                              </SelectContent>
+                              </Select>
+                          </div>
+                          <DialogFooter>
+                              <Button type="submit">Add Order</Button>
+                          </DialogFooter>
+                          </form>
+                      </DialogContent>
+                    </Dialog>
+                 </div>
+
+                 {/* Mobile Actions */}
                  <div className="md:hidden">
                     <MobileActions />
                 </div>
@@ -598,8 +722,7 @@ export default function OrderDashboard() {
             </div>
 
               <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2 md:justify-end">
-                <span className="text-sm text-muted-foreground hidden mobile:inline md:hidden">Date</span>
-                <span className="text-sm text-muted-foreground hidden md:inline">Date</span>
+                <span className="text-sm text-muted-foreground hidden mobile:inline">Date</span>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -722,7 +845,7 @@ export default function OrderDashboard() {
                       </TableCell>
                       <TableCell className="text-left hidden md:table-cell min-w-[150px]">{formatDateInUTC(order.orderDate)}</TableCell>
                       <TableCell className="text-right hidden lg:table-cell">{order.quantity}</TableCell>
-                       <TableCell className="text-right hidden md:table-cell">{order.confirmedQuantity}</TableCell>
+                       <TableCell className="text-right hidden lg:table-cell">{order.confirmedQuantity}</TableCell>
                       <TableCell className="text-right hidden md:table-cell">
                         {order.total.toLocaleString("en-US", {
                           style: "currency",
