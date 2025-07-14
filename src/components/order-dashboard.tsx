@@ -96,6 +96,16 @@ export default function OrderDashboard() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -262,7 +272,7 @@ export default function OrderDashboard() {
 
   const renderPagination = () => {
     const pages = [];
-    const maxPagesToShow = 5; 
+    const maxPagesToShow = isMobile ? 3 : 5;
     
     if (totalPages <= maxPagesToShow) {
       for (let i = 1; i <= totalPages; i++) {
@@ -282,35 +292,50 @@ export default function OrderDashboard() {
         );
       }
     } else {
-      pages.push(
-        <Button
-          key={1}
-          variant="ghost"
-          size="icon"
-          className={cn("h-8 w-8 text-sm", {
-            "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": 1 === currentPage,
-            "text-gray-500": 1 !== currentPage,
-          })}
-          onClick={() => setCurrentPage(1)}
-        >
-          1
-        </Button>
-      );
-      if (currentPage > 3) {
-        pages.push(<span key="start-ellipsis" className="px-2">...</span>);
-      }
-      
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      let startPage, endPage;
+      if (isMobile) {
+        startPage = Math.max(1, currentPage - 1);
+        endPage = Math.min(totalPages, currentPage + 1);
+        if (currentPage === 1) {
+            startPage = 1;
+            endPage = 3;
+        }
+        if (currentPage === totalPages) {
+            startPage = totalPages - 2;
+            endPage = totalPages;
+        }
+      } else {
+        pages.push(
+            <Button
+              key={1}
+              variant="ghost"
+              size="icon"
+              className={cn("h-8 w-8 text-sm", {
+                "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": 1 === currentPage,
+                "text-gray-500": 1 !== currentPage,
+              })}
+              onClick={() => setCurrentPage(1)}
+            >
+              1
+            </Button>
+          );
+        if (currentPage > 3) {
+            pages.push(<span key="start-ellipsis" className="px-2">...</span>);
+        }
+        
+        startPage = Math.max(2, currentPage - 1);
+        endPage = Math.min(totalPages - 1, currentPage + 1);
 
-      if (currentPage <= 3) {
-        startPage = 2;
-        endPage = 4;
+        if (currentPage <= 3) {
+            startPage = 2;
+            endPage = 4;
+        }
+        if (currentPage >= totalPages - 2) {
+            startPage = totalPages - 3;
+            endPage = totalPages - 1;
+        }
       }
-      if (currentPage >= totalPages - 2) {
-        startPage = totalPages - 3;
-        endPage = totalPages - 1;
-      }
+
 
       for (let i = startPage; i <= endPage; i++) {
         pages.push(
@@ -329,23 +354,25 @@ export default function OrderDashboard() {
         );
       }
 
-      if (currentPage < totalPages - 2) {
-         pages.push(<span key="end-ellipsis" className="px-2">...</span>);
+      if (!isMobile) {
+        if (currentPage < totalPages - 2) {
+            pages.push(<span key="end-ellipsis" className="px-2">...</span>);
+        }
+        pages.push(
+            <Button
+            key={totalPages}
+            variant="ghost"
+            size="icon"
+            className={cn("h-8 w-8 text-sm", {
+                "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": totalPages === currentPage,
+                "text-gray-500": totalPages !== currentPage,
+            })}
+            onClick={() => setCurrentPage(totalPages)}
+            >
+            {totalPages}
+            </Button>
+        );
       }
-      pages.push(
-        <Button
-          key={totalPages}
-          variant="ghost"
-          size="icon"
-          className={cn("h-8 w-8 text-sm", {
-            "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": totalPages === currentPage,
-            "text-gray-500": totalPages !== currentPage,
-          })}
-          onClick={() => setCurrentPage(totalPages)}
-        >
-          {totalPages}
-        </Button>
-      );
     }
 
 
@@ -723,7 +750,7 @@ export default function OrderDashboard() {
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-              <div className="hidden mobile:flex">{renderPagination()}</div>
+              <div className="flex">{renderPagination()}</div>
               <Button
                 variant="ghost"
                 size="icon"
