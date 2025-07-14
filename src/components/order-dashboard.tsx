@@ -291,7 +291,7 @@ export default function OrderDashboard() {
   };
 
   const MobileActions = () => (
-    <div className="lg:hidden ml-auto">
+    <div className="mobile:hidden ml-auto">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -356,7 +356,7 @@ export default function OrderDashboard() {
         <CardHeader className="p-4 md:p-6 pb-0">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Order Tracking</h2>
-                 <div className="hidden lg:flex ml-auto items-center gap-2">
+                 <div className="hidden mobile:flex ml-auto items-center gap-2">
                     <Button
                     variant="outline"
                     className="bg-gray-100 border-gray-200"
@@ -429,14 +429,14 @@ export default function OrderDashboard() {
                     </DialogContent>
                     </Dialog>
                 </div>
-                <div className="lg:hidden">
+                <div className="mobile:hidden">
                     <MobileActions />
                 </div>
             </div>
         </CardHeader>
         <CardContent className="p-4 md:p-6 space-y-4">
-          <Separator className="lg:hidden -mt-2 mb-4" />
-          <div className="hidden lg:flex flex-col md:flex-row md:items-center gap-4">
+          <Separator className="mobile:hidden -mt-2 mb-4" />
+          <div className="hidden mobile:flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex flex-wrap items-center gap-4 w-full">
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -467,7 +467,7 @@ export default function OrderDashboard() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="flex flex-col mobile:flex-row items-start mobile:items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Date</span>
               <Popover>

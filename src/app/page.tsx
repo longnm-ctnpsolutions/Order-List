@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Home() {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 min-w-[375px]">
       <aside className="w-16 bg-white flex-col items-center py-4 hidden lg:flex">
         <div className="flex flex-col items-center space-y-6">
           <Button variant="ghost" size="icon">
