@@ -12,6 +12,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar as CalendarIcon,
+  RefreshCw,
+  LayoutGrid,
+  FileDown
 } from "lucide-react";
 import { type DateRange } from "react-day-picker";
 
@@ -446,11 +449,15 @@ export default function OrderDashboard() {
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Order Tracking</h2>
                  <div className="hidden md:flex ml-auto items-center gap-2">
+                    <Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5"/></Button>
+                    <Button variant="ghost" size="icon"><RefreshCw className="h-5 w-5"/></Button>
+                    <Button variant="ghost" size="icon"><LayoutGrid className="h-5 w-5"/></Button>
+                    <Button variant="ghost" size="icon"><FileDown className="h-5 w-5"/></Button>
                     <Button
-                    variant="outline"
-                    className="bg-gray-100 border-gray-200"
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                    disabled={selectedRowsCount === 0}
+                      variant="outline"
+                      className="bg-gray-100 border-gray-200"
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      disabled={selectedRowsCount === 0}
                     >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
@@ -525,8 +532,7 @@ export default function OrderDashboard() {
         </CardHeader>
         <CardContent className="p-4 md:p-6 space-y-4">
           <Separator className="md:hidden -mt-2 mb-4" />
-          <div className="hidden md:flex flex-col md:flex-row md:items-center gap-4">
-            <div className="flex flex-wrap items-center gap-4 w-full">
+          <div className="hidden md:flex flex-row md:items-center gap-4">
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                 <Input
@@ -553,11 +559,10 @@ export default function OrderDashboard() {
                   <SelectItem value="Rejected">Rejected</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2">
               <span className="text-sm text-muted-foreground">Date</span>
               <Popover>
                 <PopoverTrigger asChild>
@@ -596,7 +601,7 @@ export default function OrderDashboard() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex w-full mobile:w-auto items-center gap-2">
               <span className="text-sm text-muted-foreground">Currency</span>
                 <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="all">
                   <SelectTrigger className="w-full mobile:w-[100px]">
@@ -792,3 +797,5 @@ export default function OrderDashboard() {
     </>
   );
 }
+
+    
