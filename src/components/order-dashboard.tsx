@@ -567,16 +567,16 @@ export default function OrderDashboard() {
         <CardContent className="p-4 md:p-6 pt-0 space-y-4">
           <Separator className="md:hidden -mt-2 mb-4" />
           
-          <div className="flex flex-col mobile:flex-row items-start mobile:items-center gap-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
             <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2">
-              <span className="text-sm text-muted-foreground">Date</span>
+              <span className="text-sm text-muted-foreground hidden md:inline">Date</span>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     id="date"
                     variant={"outline"}
                     className={cn(
-                      "w-full mobile:w-[260px] justify-start text-left font-normal",
+                      "w-full md:w-[260px] justify-start text-left font-normal",
                       !dateRange && "text-muted-foreground"
                     )}
                   >
@@ -607,10 +607,10 @@ export default function OrderDashboard() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="flex w-full mobile:w-auto items-center gap-2">
-              <span className="text-sm text-muted-foreground">Currency</span>
+            <div className="flex w-full md:w-auto items-center gap-2">
+              <span className="text-sm text-muted-foreground hidden md:inline">Currency</span>
                 <Select onValueChange={(value) => { setCurrencyFilter(value); setCurrentPage(1); }} defaultValue="VND">
-                  <SelectTrigger className="w-full mobile:w-auto">
+                  <SelectTrigger className="w-full md:w-auto">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -637,25 +637,25 @@ export default function OrderDashboard() {
                   <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("id")}>
                     <div className="flex items-center">Order ID {renderSortIcon("id")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[150px] cursor-pointer" onClick={() => handleSort("customerId")}>
+                  <TableHead className="min-w-[150px] cursor-pointer hidden md:table-cell" onClick={() => handleSort("customerId")}>
                     <div className="flex items-center">Customer ID {renderSortIcon("customerId")}</div>
                   </TableHead>
-                   <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("backOrder")}>
+                   <TableHead className="min-w-[120px] cursor-pointer hidden md:table-cell" onClick={() => handleSort("backOrder")}>
                     <div className="flex items-center">Back Order {renderSortIcon("backOrder")}</div>
                   </TableHead>
                   <TableHead className="min-w-[120px] cursor-pointer" onClick={() => handleSort("status")}>
                     <div className="flex items-center">Order Status {renderSortIcon("status")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[120px] cursor-pointer text-left" onClick={() => handleSort("orderDate")}>
+                  <TableHead className="min-w-[120px] cursor-pointer text-left hidden md:table-cell" onClick={() => handleSort("orderDate")}>
                     <div className="flex items-center">Order Date {renderSortIcon("orderDate")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[100px] cursor-pointer text-right" onClick={() => handleSort("quantity")}>
+                  <TableHead className="min-w-[100px] cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("quantity")}>
                     <div className="flex items-center justify-end">Ordered Quantity {renderSortIcon("quantity")}</div>
                   </TableHead>
-                  <TableHead className="min-w-[150px] cursor-pointer text-right" onClick={() => handleSort("confirmedQuantity")}>
+                  <TableHead className="min-w-[150px] cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("confirmedQuantity")}>
                     <div className="flex items-center justify-end">Confirmed Quantity {renderSortIcon("confirmedQuantity")}</div>
                   </TableHead>
-                  <TableHead className="cursor-pointer text-right" onClick={() => handleSort("total")}>
+                  <TableHead className="cursor-pointer text-right hidden md:table-cell" onClick={() => handleSort("total")}>
                     <div className="flex items-center justify-end">Total Amount (Incl. VAT) {renderSortIcon("total")}</div>
                   </TableHead>
                   <TableHead className="min-w-[80px] text-right">Actions</TableHead>
@@ -678,8 +678,8 @@ export default function OrderDashboard() {
                       </TableCell>
                        <TableCell className="font-medium">{order.temporaryOrderId}</TableCell>
                       <TableCell className="font-medium">{order.id}</TableCell>
-                      <TableCell>{order.customerId}</TableCell>
-                       <TableCell>{order.backOrder}</TableCell>
+                      <TableCell className="hidden md:table-cell">{order.customerId}</TableCell>
+                       <TableCell className="hidden md:table-cell">{order.backOrder}</TableCell>
                       <TableCell>
                         <Badge
                           className={cn(
@@ -691,10 +691,10 @@ export default function OrderDashboard() {
                           {order.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-left">{formatDateInUTC(order.orderDate)}</TableCell>
-                      <TableCell className="text-right">{order.quantity}</TableCell>
-                       <TableCell className="text-right">{order.confirmedQuantity}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-left hidden md:table-cell">{formatDateInUTC(order.orderDate)}</TableCell>
+                      <TableCell className="text-right hidden md:table-cell">{order.quantity}</TableCell>
+                       <TableCell className="text-right hidden md:table-cell">{order.confirmedQuantity}</TableCell>
+                      <TableCell className="text-right hidden md:table-cell">
                         {order.total.toLocaleString("en-US", {
                           style: "currency",
                           currency: order.currency,
