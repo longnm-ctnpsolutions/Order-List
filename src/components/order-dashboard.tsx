@@ -262,36 +262,98 @@ export default function OrderDashboard() {
 
   const renderPagination = () => {
     const pages = [];
-    const maxPagesToShow = 8;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    const maxPagesToShow = 5; 
     
-    if (endPage - startPage + 1 < maxPagesToShow) {
-      startPage = Math.max(1, endPage - maxPagesToShow + 1);
-    }
-    
-    for (let i = startPage; i <= endPage; i++) {
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(
+          <Button
+            key={i}
+            variant="ghost"
+            size="icon"
+            className={cn("h-8 w-8 text-sm", {
+              "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": i === currentPage,
+              "text-gray-500": i !== currentPage,
+            })}
+            onClick={() => setCurrentPage(i)}
+          >
+            {i}
+          </Button>
+        );
+      }
+    } else {
       pages.push(
         <Button
-          key={i}
+          key={1}
           variant="ghost"
           size="icon"
           className={cn("h-8 w-8 text-sm", {
-            "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": i === currentPage,
-            "text-gray-500": i !== currentPage,
+            "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": 1 === currentPage,
+            "text-gray-500": 1 !== currentPage,
           })}
-          onClick={() => setCurrentPage(i)}
+          onClick={() => setCurrentPage(1)}
         >
-          {i}
+          1
+        </Button>
+      );
+      if (currentPage > 3) {
+        pages.push(<span key="start-ellipsis" className="px-2">...</span>);
+      }
+      
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 3) {
+        startPage = 2;
+        endPage = 4;
+      }
+      if (currentPage >= totalPages - 2) {
+        startPage = totalPages - 3;
+        endPage = totalPages - 1;
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(
+          <Button
+            key={i}
+            variant="ghost"
+            size="icon"
+            className={cn("h-8 w-8 text-sm", {
+              "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": i === currentPage,
+              "text-gray-500": i !== currentPage,
+            })}
+            onClick={() => setCurrentPage(i)}
+          >
+            {i}
+          </Button>
+        );
+      }
+
+      if (currentPage < totalPages - 2) {
+         pages.push(<span key="end-ellipsis" className="px-2">...</span>);
+      }
+      pages.push(
+        <Button
+          key={totalPages}
+          variant="ghost"
+          size="icon"
+          className={cn("h-8 w-8 text-sm", {
+            "bg-blue-600 text-white hover:bg-blue-700 hover:text-white": totalPages === currentPage,
+            "text-gray-500": totalPages !== currentPage,
+          })}
+          onClick={() => setCurrentPage(totalPages)}
+        >
+          {totalPages}
         </Button>
       );
     }
 
-    return <div className="flex space-x-1">{pages}</div>;
+
+    return <div className="flex space-x-1 items-center">{pages}</div>;
   };
 
   const MobileActions = () => (
-    <div className="mobile:hidden ml-auto">
+    <div className="md:hidden ml-auto">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -356,7 +418,7 @@ export default function OrderDashboard() {
         <CardHeader className="p-4 md:p-6 pb-0">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Order Tracking</h2>
-                 <div className="hidden mobile:flex ml-auto items-center gap-2">
+                 <div className="hidden md:flex ml-auto items-center gap-2">
                     <Button
                     variant="outline"
                     className="bg-gray-100 border-gray-200"
@@ -429,14 +491,14 @@ export default function OrderDashboard() {
                     </DialogContent>
                     </Dialog>
                 </div>
-                <div className="mobile:hidden">
+                <div className="md:hidden">
                     <MobileActions />
                 </div>
             </div>
         </CardHeader>
         <CardContent className="p-4 md:p-6 space-y-4">
-          <Separator className="mobile:hidden -mt-2 mb-4" />
-          <div className="hidden mobile:flex flex-col md:flex-row md:items-center gap-4">
+          <Separator className="md:hidden -mt-2 mb-4" />
+          <div className="hidden md:flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex flex-wrap items-center gap-4 w-full">
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -661,7 +723,7 @@ export default function OrderDashboard() {
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-              {renderPagination()}
+              <div className="hidden mobile:flex">{renderPagination()}</div>
               <Button
                 variant="ghost"
                 size="icon"
