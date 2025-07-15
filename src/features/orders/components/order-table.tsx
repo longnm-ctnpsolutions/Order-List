@@ -78,14 +78,28 @@ interface OrderTableProps {
 }
 
 export const OrderTable: React.FC<OrderTableProps> = ({ paginatedOrders, rowSelection, sortConfig, handleSort, handleRowSelect, setRowSelection, setIsDeleteDialogOpen }) => {
+    const areAllRowsSelected = paginatedOrders.length > 0 && paginatedOrders.every(order => rowSelection[order.id]);
+    
+    const handleSelectAll = () => {
+        const newRowSelection: Record<string, boolean> = {};
+        if (!areAllRowsSelected) {
+            paginatedOrders.forEach(order => {
+                newRowSelection[order.id] = true;
+            });
+        }
+        setRowSelection(newRowSelection);
+    };
+
     return (
         <Table>
             <TableHeader>
             <TableRow className="bg-gray-50 hover:bg-gray-50 w-full">
                 <TableHead className="w-[50px] px-4">
-                <div className="flex items-center justify-center h-5 w-5 rounded-sm border border-primary bg-primary/20">
-                    <Minus className="h-4 w-4 text-primary"/>
-                </div>
+                <Checkbox
+                    checked={areAllRowsSelected}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Select all rows"
+                />
                 </TableHead>
                 <TableHead className="min-w-[150px] cursor-pointer" onClick={() => handleSort("temporaryOrderId")}>
                 <div className="flex items-center">Temporary Order ID {renderSortIcon("temporaryOrderId", sortConfig)}</div>
