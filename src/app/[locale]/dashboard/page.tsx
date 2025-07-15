@@ -1,6 +1,6 @@
-import OrderDashboard from "@/components/order-dashboard";
-import Header from "@/components/layout/header";
-import Sidebar from "@/components/layout/sidebar";
+import OrderDashboard from "@/features/orders/components/order-dashboard";
+import Header from "@/shared/components/layout/header";
+import Sidebar from "@/shared/components/layout/sidebar";
 
 export default function DashboardPage() {
   return (

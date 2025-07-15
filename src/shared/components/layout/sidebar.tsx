@@ -9,13 +9,13 @@ import {
   ChevronDown,
   Menu,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+} from "@/shared/components/ui/collapsible";
+import { cn } from "@/shared/lib/utils";
 import Image from "next/image";
 
 interface SidebarProps {

@@ -3,9 +3,9 @@
 import * as React from "react";
 import { type DateRange } from "react-day-picker";
 
-import { useToast } from "@/hooks/use-toast";
-import { type Order } from "@/types/order";
-import { orders as initialOrders } from "@/lib/data";
+import { useToast } from "@/shared/hooks/use-toast";
+import { type Order } from "@/features/orders/types/order.types";
+import { orders as initialOrders } from "@/features/orders/lib/data";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -18,15 +18,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { OrderFilters } from "./dashboard/order-filters";
-import { OrderActions } from "./dashboard/order-actions";
-import { OrderTable } from "./dashboard/order-table";
-import { OrderPagination } from "./dashboard/order-pagination";
+import { OrderFilters } from "./order-filters";
+import { OrderActions } from "./order-actions";
+import { OrderTable } from "./order-table";
+import { OrderPagination } from "./order-pagination";
 
 type SortKey = keyof Order;
 
@@ -136,17 +136,6 @@ export default function OrderDashboard() {
 
   const handleRowSelect = (id: string) => {
     setRowSelection((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    const newSelection = paginatedOrders.reduce(
-      (acc, order) => {
-        acc[order.id] = checked;
-        return acc;
-      },
-      {} as Record<string, boolean>
-    );
-    setRowSelection(checked ? newSelection : {});
   };
 
   const handleDelete = () => {
