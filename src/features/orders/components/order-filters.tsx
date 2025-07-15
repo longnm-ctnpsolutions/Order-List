@@ -6,20 +6,20 @@ import { type DateRange } from "react-day-picker";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
-import { Button } from "@/shared/components/ui/button";
-import { Calendar } from "@/shared/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/shared/components/ui/popover";
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/shared/components/ui/select";
+} from "@/components/ui/select";
 
 interface OrderFiltersProps {
     dateRange: DateRange | undefined;
