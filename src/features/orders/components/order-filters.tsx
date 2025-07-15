@@ -30,12 +30,8 @@ interface OrderFiltersProps {
 
 export const OrderFilters: React.FC<OrderFiltersProps> = ({ dateRange, setDateRange, setCurrencyFilter, setCurrentPage }) => {
     return (
-        <div className="flex flex-col mobile:flex-row items-start mobile:items-center gap-4">
-        <div className="hidden md:flex items-center gap-2 w-full">
-            {/* Desktop filters are in the header */}
-        </div>
-
-          <div className="flex w-full flex-col mobile:flex-row items-start mobile:items-center gap-2 md:justify-end">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full">
+          <div className="flex w-full flex-col mobile:flex-row flex-wrap items-start mobile:items-center gap-2 md:justify-end">
             <span className="text-sm text-muted-foreground hidden mobile:inline">Date</span>
             <Popover>
               <PopoverTrigger asChild>
