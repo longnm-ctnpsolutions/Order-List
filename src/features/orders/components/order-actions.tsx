@@ -96,49 +96,22 @@ const MobileActions = ({ searchQuery, setSearchQuery, setStatusFilter, setCurren
     </DropdownMenu>
   );
   
-  const TabletActions = ({ searchQuery, setSearchQuery, setStatusFilter, setCurrentPage }: Pick<OrderActionsProps, 'searchQuery' | 'setSearchQuery' | 'setStatusFilter' | 'setCurrentPage'>) => (
+const ActionsDropdown = ({ children }: { children: React.ReactNode }) => (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <MoreVertical className="h-5 w-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <div className="p-2 space-y-2">
-          <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-              <Input
-                  placeholder="Order Search"
-                  value={searchQuery}
-                  onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setCurrentPage(1);
-                  }}
-                  className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
-              />
-          </div>
-          <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
-              <SelectTrigger className="w-full bg-gray-100 border-gray-100">
-                  <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="New Order">New Order</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Draft">Draft</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                  <SelectItem value="Waiting Process">Waiting Process</SelectItem>
-                  <SelectItem value="Rejected">Rejected</SelectItem>
-              </SelectContent>
-          </Select>
-        </div>
-        <DropdownMenuSeparator/>
-        <DropdownMenuItem><RefreshCw className="mr-2 h-4 w-4"/> Refresh</DropdownMenuItem>
-        <DropdownMenuItem><LayoutGrid className="mr-2 h-4 w-4"/> Layout</DropdownMenuItem>
-        <DropdownMenuItem><FileDown className="mr-2 h-4 w-4"/> Download</DropdownMenuItem>
-      </DropdownMenuContent>
+        <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+                <MoreVertical className="h-5 w-5" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+            {children}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem><RefreshCw className="mr-2 h-4 w-4" /> Refresh</DropdownMenuItem>
+            <DropdownMenuItem><LayoutGrid className="mr-2 h-4 w-4" /> Layout</DropdownMenuItem>
+            <DropdownMenuItem><FileDown className="mr-2 h-4 w-4" /> Download</DropdownMenuItem>
+        </DropdownMenuContent>
     </DropdownMenu>
-  )
+);
 
 export const OrderActions: React.FC<OrderActionsProps> = ({ 
     searchQuery, setSearchQuery, setStatusFilter, setIsAddOrderDialogOpen, setIsDeleteDialogOpen, selectedRowsCount, setCurrentPage 
@@ -198,23 +171,47 @@ export const OrderActions: React.FC<OrderActionsProps> = ({
                 
                 {/* Tablet Actions */}
                 <div className="hidden md:flex lg:hidden ml-auto items-center gap-2">
-                    <TabletActions 
-                      searchQuery={searchQuery}
-                      setSearchQuery={setSearchQuery}
-                      setStatusFilter={setStatusFilter}
-                      setCurrentPage={setCurrentPage}
-                    />
+                    <ActionsDropdown>
+                        <div className="p-2 space-y-2">
+                            <div className="relative w-full">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                                <Input
+                                    placeholder="Order Search"
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    className="pl-10 pr-4 py-2 w-full bg-gray-100 border-gray-100 rounded-md"
+                                />
+                            </div>
+                            <Select onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }} defaultValue="all">
+                                <SelectTrigger className="w-full bg-gray-100 border-gray-100">
+                                    <SelectValue placeholder="All" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Status</SelectItem>
+                                    <SelectItem value="New Order">New Order</SelectItem>
+                                    <SelectItem value="Completed">Completed</SelectItem>
+                                    <SelectItem value="Draft">Draft</SelectItem>
+                                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="Waiting Process">Waiting Process</SelectItem>
+                                    <SelectItem value="Rejected">Rejected</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </ActionsDropdown>
                     <Button
                       variant="outline"
                       onClick={() => setIsDeleteDialogOpen(true)}
                       disabled={selectedRowsCount === 0}
                     >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
                     </Button>
                     <Button className="bg-blue-700 hover:bg-blue-800 text-white" onClick={() => setIsAddOrderDialogOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add New Order
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add New Order
                     </Button>
                 </div>
             </div>

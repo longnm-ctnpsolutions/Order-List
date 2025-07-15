@@ -4,7 +4,6 @@ import * as React from "react"
 import {
   ArrowUpDown,
   MoreVertical,
-  Minus
 } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
