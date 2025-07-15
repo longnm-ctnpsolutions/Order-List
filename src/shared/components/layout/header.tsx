@@ -1,8 +1,8 @@
 import { Menu, Bell } from "lucide-react";
 import Image from "next/image";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
+import { Button } from "@/shared/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 import Sidebar from "./sidebar";
 
 export default function Header() {
