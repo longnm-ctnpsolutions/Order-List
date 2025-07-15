@@ -3,7 +3,6 @@
 import React from 'react';
 import { 
   LayoutGrid, 
-  Zap, 
   List, 
   Bell, 
   Calculator, 
