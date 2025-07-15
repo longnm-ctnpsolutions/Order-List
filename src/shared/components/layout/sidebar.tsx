@@ -9,12 +9,12 @@ import {
   ChevronDown,
   Menu,
 } from "lucide-react";
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/shared/components/ui/collapsible";
+} from "@/components/ui/collapsible";
 import { cn } from "@/shared/lib/utils";
 import Image from "next/image";
 
