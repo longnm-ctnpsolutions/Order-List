@@ -119,77 +119,77 @@ const orderData = {
 };
 
 const PageHeader = () => {
-    return (
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-        <div className="flex items-center mb-4 md:mb-0">
-          <Link href="/en/orders" passHref>
-            <Button variant="ghost" size="icon" className="mr-2">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <h1 className="text-2xl font-semibold">Order Details</h1>
-        </div>
-  
-        {/* Actions for mobile and small tablets */}
-        <div className="flex md:hidden gap-2 w-full">
-            <Button variant="outline" className="flex-1 bg-green-600 text-white hover:bg-green-700">
-                <CheckCircle2 className="mr-2 h-4 w-4" />
-                Confirm
-            </Button>
-            <Button className="flex-1 bg-primary text-primary-foreground">
-                <Save className="mr-2 h-4 w-4" />
-                Save
-            </Button>
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
-                        <MoreVertical className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Export
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Copy className="mr-2 h-4 w-4" />
-                        Duplicate
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Save className="mr-2 h-4 w-4" />
-                        Save As Draft
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-  
-        {/* Actions for larger screens */}
-        <div className="hidden md:flex gap-2">
-          <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700">
-            <CheckCircle2 className="mr-2 h-4 w-4" />
-            Confirm BO
+  return (
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+      <div className="flex items-center mb-4 md:mb-0">
+        <Link href="/en/orders" passHref>
+          <Button variant="ghost" size="icon" className="mr-2">
+            <ArrowLeft className="h-5 w-5" />
           </Button>
-          <Button variant="outline">
-            <Upload className="mr-2 h-4 w-4" />
-            Export
-          </Button>
-          <Button variant="outline">
-            <Copy className="mr-2 h-4 w-4" />
-            Duplicate
-          </Button>
-          <Button variant="outline">
-            <Save className="mr-2 h-4 w-4" />
-            Save As Draft
-          </Button>
-          <Button className="bg-primary text-primary-foreground">
-            <Save className="mr-2 h-4 w-4" />
-            Save Order
-          </Button>
-        </div>
+        </Link>
+        <h1 className="text-2xl font-semibold">Order Details</h1>
       </div>
-    );
-  };
-  
+
+      {/* Actions for mobile and small tablets */}
+      <div className="flex md:hidden gap-2 w-full">
+          <Button variant="outline" className="flex-1 bg-green-600 text-white hover:bg-green-700">
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              Confirm
+          </Button>
+          <Button className="flex-1 bg-primary text-primary-foreground">
+              <Save className="mr-2 h-4 w-4" />
+              Save
+          </Button>
+           <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                  </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Export
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                      <Copy className="mr-2 h-4 w-4" />
+                      Duplicate
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                      <Save className="mr-2 h-4 w-4" />
+                      Save As Draft
+                  </DropdownMenuItem>
+              </DropdownMenuContent>
+          </DropdownMenu>
+      </div>
+
+      {/* Actions for larger screens */}
+      <div className="hidden md:flex gap-2">
+        <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700">
+          <CheckCircle2 className="mr-2 h-4 w-4" />
+          Confirm BO
+        </Button>
+        <Button variant="outline">
+          <Upload className="mr-2 h-4 w-4" />
+          Export
+        </Button>
+        <Button variant="outline">
+          <Copy className="mr-2 h-4 w-4" />
+          Duplicate
+        </Button>
+        <Button variant="outline">
+          <Save className="mr-2 h-4 w-4" />
+          Save As Draft
+        </Button>
+        <Button className="bg-primary text-primary-foreground">
+          <Save className="mr-2 h-4 w-4" />
+          Save Order
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const OrderSummary = ({ data }: { data: typeof orderData }) => (
   <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground mb-6">
     <span>
@@ -385,11 +385,38 @@ const ProductDetailsTable = ({ data }: { data: typeof orderData.products }) => {
               </TableBody>
             </Table>
           </div>
-          <div className="flex flex-wrap items-center justify-end gap-2 mt-4">
+           {/* Actions for larger screens */}
+           <div className="hidden md:flex flex-wrap items-center justify-end gap-2 mt-4">
             <Button variant="outline"><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button>
             <Button variant="outline"><Calendar className="mr-2 h-4 w-4" />Recalculate Date</Button>
             <Button variant="outline"><List className="mr-2 h-4 w-4" />Select from Price List</Button>
             <Button className="bg-primary text-primary-foreground"><Plus className="mr-2 h-4 w-4" />Add Product</Button>
+          </div>
+
+          {/* Actions for smaller screens */}
+          <div className="flex md:hidden items-center justify-end gap-2 mt-4">
+            <Button className="bg-primary text-primary-foreground flex-1"><Plus className="mr-2 h-4 w-4" />Add Product</Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Refresh
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Recalculate Date
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <List className="mr-2 h-4 w-4" />
+                  Select from Price List
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </CardContent>
       </Card>
