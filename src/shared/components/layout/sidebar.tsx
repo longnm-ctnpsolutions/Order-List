@@ -101,7 +101,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
             isMobile ? "p-4" : "p-4 h-[60px]"
         )}>
             {!isCollapsed && !isMobile && (
-              <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={140} height={20} />
+              <Image src="/images/logo.svg" alt="Bridgestone Logo" width={140} height={20} />
             )}
             {!isMobile && (
               <Button variant="ghost" size="icon" onClick={() => setIsCollapsed(!isCollapsedDesktop)}>
@@ -110,7 +110,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
             )}
              {isMobile && (
                 <div className="flex items-center justify-between w-full">
-                     <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={140} height={20} />
+                     <Image src="/images/logo.svg" alt="Bridgestone Logo" width={140} height={20} />
                 </div>
             )}
         </div>
