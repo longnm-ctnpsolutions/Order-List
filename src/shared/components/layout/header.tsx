@@ -2,7 +2,7 @@
 
 import { Menu, Bell } from "lucide-react";
 import Image from "next/image";
-import { Sheet, SheetContent, SheetTitle, SheetHeader } from "@/shared/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetHeader } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 import Sidebar from "./sidebar";
