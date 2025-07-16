@@ -17,13 +17,14 @@ import {
 } from "@/components/ui/collapsible";
 import { cn } from "@/shared/lib/utils";
 import Image from "next/image";
+import { useSidebar } from "@/shared/components/ui/sidebar";
 
 interface SidebarProps {
   isMobile?: boolean;
 }
 
 export default function Sidebar({ isMobile = false }: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const { isCollapsed, setIsCollapsed } = useSidebar();
   
   const NavItem = ({ icon: Icon, children, isCollapsed, active = false, asChild=false, ...props }: any) => {
     const Comp = asChild ? 'div' : Button;
@@ -72,9 +73,9 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
   );
 
   const sidebarClasses = cn(
-    "bg-white flex flex-col transition-all duration-300 ease-in-out border-r border-gray-200",
+    "bg-white flex flex-col transition-all duration-300 ease-in-out border-r border-gray-200 z-50",
     isCollapsed ? "w-16" : "w-64",
-    isMobile ? "w-full h-full" : "hidden lg:flex"
+    isMobile ? "w-full h-full" : "hidden lg:flex lg:fixed lg:h-full"
   );
   
   return (

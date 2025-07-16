@@ -27,6 +27,8 @@ import { OrderFilters } from "./order-filters";
 import { OrderActions } from "./order-actions";
 import { OrderTable } from "./order-table";
 import { OrderPagination } from "./order-pagination";
+import { useSidebar } from "@/shared/components/ui/sidebar";
+import { cn } from "@/shared/lib/utils";
 
 type SortKey = keyof Order;
 
@@ -50,6 +52,7 @@ export default function OrderDashboard() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isAddOrderDialogOpen, setIsAddOrderDialogOpen] = React.useState(false);
+  const { isCollapsed, isMobile } = useSidebar() ?? { isCollapsed: false, isMobile: false };
   
   const ITEMS_PER_PAGE = 10;
 
@@ -183,7 +186,10 @@ export default function OrderDashboard() {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
-        <Card className="shadow-lg bg-white max-w-full overflow-hidden">
+        <Card className={cn(
+            "shadow-lg bg-white max-w-full overflow-hidden transition-all duration-300 ease-in-out",
+            !isMobile && (isCollapsed ? "lg:ml-16" : "lg:ml-64")
+          )}>
           <CardHeader className="p-4 md:p-6 pb-0 md:pb-4">
               <OrderActions 
                 searchQuery={searchQuery}
