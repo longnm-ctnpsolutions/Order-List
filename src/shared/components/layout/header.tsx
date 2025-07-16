@@ -2,18 +2,14 @@
 
 import { Menu, Bell } from "lucide-react";
 import Image from "next/image";
-import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 import Sidebar from "./sidebar";
-import { useSidebar } from "@/shared/components/ui/sidebar";
-import { cn } from "@/shared/lib/utils";
 
 export default function Header() {
   return (
-    <header className={cn(
-        "bg-white shadow-sm flex items-center justify-between p-4 lg:py-2.5 lg:px-6"
-    )}>
+    <header className="bg-white shadow-sm flex items-center justify-between p-4 lg:py-2.5 lg:px-6">
       <div className="flex items-center gap-4">
         <Sheet>
           <SheetTrigger asChild>
@@ -22,6 +18,7 @@ export default function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[260px] p-0">
+            <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
             <Sidebar isMobile={true}/>
           </SheetContent>
         </Sheet>
