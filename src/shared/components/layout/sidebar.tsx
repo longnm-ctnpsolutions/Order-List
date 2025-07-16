@@ -73,9 +73,9 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
   );
 
   const sidebarClasses = cn(
-    "bg-white flex flex-col transition-all duration-300 ease-in-out border-r border-gray-200 z-50",
+    "bg-white flex-col transition-all duration-300 ease-in-out border-r border-gray-200 z-50",
     isCollapsed ? "w-16" : "w-64",
-    isMobile ? "w-full h-full" : "hidden lg:flex lg:fixed lg:h-full"
+    isMobile ? "w-full h-full flex" : "hidden lg:flex lg:fixed lg:h-full"
   );
   
   return (

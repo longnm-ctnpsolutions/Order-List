@@ -10,12 +10,12 @@ function DashboardLayout() {
   const { isCollapsed, isMobile } = useSidebar();
 
   return (
-    <div className="flex min-h-screen bg-gray-100 min-w-[375px]">
+    <div className="min-h-screen bg-gray-100 min-w-[375px]">
       <Sidebar />
       <div
         className={cn(
-          "flex-1 flex flex-col transition-all duration-300 ease-in-out",
-          !isMobile && (isCollapsed ? "lg:ml-16" : "lg:ml-64")
+          "flex flex-col transition-all duration-300 ease-in-out",
+          !isMobile && (isCollapsed ? "lg:pl-16" : "lg:pl-64")
         )}
       >
         <Header />
