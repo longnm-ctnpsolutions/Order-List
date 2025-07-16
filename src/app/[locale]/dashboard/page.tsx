@@ -14,12 +14,12 @@ function DashboardLayout() {
       <Sidebar />
       <div
         className={cn(
-          "flex flex-col transition-all duration-300 ease-in-out",
+          "flex flex-col transition-all duration-300 ease-in-out w-full",
           !isMobile && (isCollapsed ? "lg:pl-16" : "lg:pl-64")
         )}
       >
         <Header />
-        <main className="flex-1 p-4 md:p-6 bg-gray-100">
+        <main className="flex-1 p-4 md:p-6 bg-background">
           <OrderDashboard />
         </main>
       </div>
@@ -30,7 +30,7 @@ function DashboardLayout() {
 export default function DashboardPage() {
   return (
     <SidebarProvider>
-      <div className="min-h-screen min-w-[375px] overflow-x-hidden">
+      <div className="relative min-h-screen w-full overflow-x-hidden bg-background">
         <DashboardLayout />
       </div>
     </SidebarProvider>
