@@ -10,7 +10,7 @@ function DashboardLayout() {
   const { isCollapsed, isMobile } = useSidebar();
 
   return (
-    <div className="min-h-screen bg-gray-100 min-w-[375px] overflow-hidden">
+    <>
       <Sidebar />
       <div
         className={cn(
@@ -19,18 +19,20 @@ function DashboardLayout() {
         )}
       >
         <Header />
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 p-4 md:p-6 bg-gray-100">
           <OrderDashboard />
         </main>
       </div>
-    </div>
+    </>
   );
 }
 
 export default function DashboardPage() {
   return (
     <SidebarProvider>
-      <DashboardLayout />
+      <div className="min-h-screen min-w-[375px] overflow-x-hidden">
+        <DashboardLayout />
+      </div>
     </SidebarProvider>
   );
 }
