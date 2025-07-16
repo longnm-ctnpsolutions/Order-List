@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link";
 import {
   ArrowUpDown,
   MoreVertical,
@@ -177,7 +178,9 @@ export const OrderTable: React.FC<OrderTableProps> = ({ paginatedOrders, rowSele
                         </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                        <Link href={`/en/orders/${order.id}`} passHref>
+                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                        </Link>
                         <DropdownMenuItem>Edit Order</DropdownMenuItem>
                         <DropdownMenuItem
                             className="text-red-600"
