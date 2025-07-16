@@ -1,3 +1,4 @@
+
 // src/app/[locale]/orders/[id]/page.tsx
 'use client';
 
@@ -19,7 +20,7 @@ import {
   Truck,
   Clock,
   FileText,
-  Cube,
+  Box,
   ChevronUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -298,7 +299,7 @@ const ProductDetailsTable = ({ data }: { data: typeof orderData.products }) => {
     return (
       <Card>
         <CardHeader className="flex flex-row items-center space-x-3 pb-4">
-          <Cube className="h-5 w-5 text-muted-foreground" />
+          <Box className="h-5 w-5 text-muted-foreground" />
           <CardTitle className="text-base font-semibold">Product Details</CardTitle>
         </CardHeader>
         <CardContent>
