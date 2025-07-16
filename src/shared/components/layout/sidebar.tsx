@@ -24,7 +24,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isMobile = false }: SidebarProps) {
-  const { isCollapsed, setIsCollapsed } = useSidebar();
+  const { isCollapsed: isCollapsedDesktop, setIsCollapsed } = useSidebar();
+  const isCollapsed = isMobile ? false : isCollapsedDesktop;
   
   const NavItem = ({ icon: Icon, children, isCollapsed, active = false, asChild=false, ...props }: any) => {
     const Comp = asChild ? 'div' : Button;
@@ -89,7 +90,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
               <Image src="https://i.imgur.com/Q2yT9W5.png" alt="Bridgestone Logo" width={140} height={20} />
             )}
             {!isMobile && (
-              <Button variant="ghost" size="icon" onClick={() => setIsCollapsed(!isCollapsed)}>
+              <Button variant="ghost" size="icon" onClick={() => setIsCollapsed(!isCollapsedDesktop)}>
                 <Menu className="h-6 w-6" />
               </Button>
             )}
