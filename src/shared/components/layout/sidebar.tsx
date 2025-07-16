@@ -10,7 +10,8 @@ import {
   Menu,
   ShoppingCart,
   Users,
-  Package
+  Package,
+  Ticket
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -117,6 +118,7 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
             <NavItem icon={LayoutGrid} isCollapsed={isCollapsed} href="/en/dashboard">Dashboard</NavItem>
             <NavItem icon={ShoppingCart} isCollapsed={isCollapsed} href="/en/orders">Orders</NavItem>
             <NavItem icon={Package} isCollapsed={isCollapsed} href="/en/products">Products</NavItem>
+            <NavItem icon={Ticket} isCollapsed={isCollapsed} href="/en/promotions">Promotions</NavItem>
             <NavItem icon={Users} isCollapsed={isCollapsed} href="/en/users">Users</NavItem>
             <NavItem icon={Bell} isCollapsed={isCollapsed} href="#">Notification</NavItem>
             <NavItem icon={Calculator} isCollapsed={isCollapsed} href="#">Earning Calculator</NavItem>

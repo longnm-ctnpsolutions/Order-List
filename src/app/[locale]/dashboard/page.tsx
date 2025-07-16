@@ -1,7 +1,7 @@
 "use client";
 
-import OrderDashboard from "@/features/orders/components/order-dashboard";
+import DashboardCharts from "@/features/dashboard/components/dashboard-charts";
 
 export default function DashboardPage() {
-  return <OrderDashboard />;
+  return <DashboardCharts />;
 }
