@@ -10,7 +10,7 @@ function DashboardLayout() {
   const { isCollapsed, isMobile } = useSidebar();
 
   return (
-    <div className="min-h-screen bg-gray-100 min-w-[375px]">
+    <div className="min-h-screen bg-gray-100 min-w-[375px] overflow-hidden">
       <Sidebar />
       <div
         className={cn(
