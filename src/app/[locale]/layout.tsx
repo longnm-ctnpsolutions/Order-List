@@ -1,35 +1,40 @@
-import type { Metadata } from "next";
-import "../globals.css";
-import { Toaster } from "@/components/ui/toaster";
+"use client";
 
-export const metadata: Metadata = {
-  title: "OrderFlow Dashboard",
-  description: "Manage and track all customer orders.",
-};
+import Header from "@/shared/components/layout/header";
+import Sidebar from "@/shared/components/layout/sidebar";
+import { SidebarProvider, useSidebar } from "@/shared/components/ui/sidebar";
+import { cn } from "@/shared/lib/utils";
+import * as React from "react";
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+function AppLayout({ children }: { children: React.ReactNode }) {
+  const { isCollapsed, isMobile } = useSidebar();
+
   return (
-    <html lang="en" className="h-full">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        ></link>
-      </head>
-      <body className="font-sans antialiased h-full">
-        {children}
-        <Toaster />
-      </body>
-    </html>
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-background">
+      <Sidebar />
+      <div
+        className={cn(
+          "flex flex-col transition-all duration-300 ease-in-out",
+          !isMobile && (isCollapsed ? "lg:pl-16" : "lg:pl-64")
+        )}
+      >
+        <Header />
+        <main className="flex-1 p-4 md:p-6 bg-background">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+export default function LocaleLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <SidebarProvider>
+      <AppLayout>{children}</AppLayout>
+    </SidebarProvider>
   );
 }

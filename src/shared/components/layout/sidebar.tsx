@@ -8,6 +8,9 @@ import {
   Calculator, 
   ChevronDown,
   Menu,
+  ShoppingCart,
+  Users,
+  Package
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +21,8 @@ import {
 import { cn } from "@/shared/lib/utils";
 import Image from "next/image";
 import { useSidebar } from "@/shared/components/ui/sidebar";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface SidebarProps {
   isMobile?: boolean;
@@ -26,26 +31,31 @@ interface SidebarProps {
 export default function Sidebar({ isMobile = false }: SidebarProps) {
   const { isCollapsed: isCollapsedDesktop, setIsCollapsed } = useSidebar();
   const isCollapsed = isMobile ? false : isCollapsedDesktop;
-  
-  const NavItem = ({ icon: Icon, children, isCollapsed, active = false, asChild=false, ...props }: any) => {
-    const Comp = asChild ? 'div' : Button;
+  const pathname = usePathname();
+
+  const NavItem = ({ icon: Icon, children, isCollapsed, href, ...props }: any) => {
+    const active = pathname.startsWith(href);
     return (
-      <Comp
-        variant="ghost"
-        className={cn(
-          "w-full justify-start items-center text-sm font-normal h-10 px-4",
-          isCollapsed ? "justify-center px-0" : "justify-start",
-          active ? "bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800" : "hover:bg-gray-100",
-        )}
-        {...props}
-      >
-        <Icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
-        {!isCollapsed && <span className="flex-1 text-left">{children}</span>}
-      </Comp>
+      <Link href={href} passHref>
+        <Button
+          variant="ghost"
+          className={cn(
+            "w-full justify-start items-center text-sm font-normal h-10 px-4",
+            isCollapsed ? "justify-center px-0" : "justify-start",
+            active ? "bg-blue-100 text-blue-700 hover:bg-blue-200 hover:text-blue-800" : "hover:bg-gray-100",
+          )}
+          {...props}
+        >
+          <Icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
+          {!isCollapsed && <span className="flex-1 text-left">{children}</span>}
+        </Button>
+      </Link>
     );
   };
   
-  const CollapsibleNavItem = ({ icon: Icon, children, subItems, isCollapsed, active = false }: any) => (
+  const CollapsibleNavItem = ({ icon: Icon, children, subItems, isCollapsed, baseHref }: any) => {
+    const active = subItems.some((item: any) => pathname.startsWith(item.href));
+    return (
     <Collapsible>
       <CollapsibleTrigger asChild>
         <Button
@@ -64,14 +74,17 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
       {!isCollapsed && (
         <CollapsibleContent className="pl-8 py-1 space-y-1">
           {subItems.map((item:any, index:number) => (
-            <Button key={index} variant="ghost" className="w-full justify-start font-normal text-sm h-9">
-              {item.name}
-            </Button>
+            <Link href={item.href} passHref key={index}>
+              <Button variant="ghost" className={cn("w-full justify-start font-normal text-sm h-9", pathname.startsWith(item.href) && "bg-gray-200")}>
+                {item.name}
+              </Button>
+            </Link>
           ))}
         </CollapsibleContent>
       )}
     </Collapsible>
-  );
+    )
+  };
 
   const sidebarClasses = cn(
     "bg-white flex-col transition-all duration-300 ease-in-out border-r border-gray-200 z-50",
@@ -101,20 +114,13 @@ export default function Sidebar({ isMobile = false }: SidebarProps) {
             )}
         </div>
         <nav className="flex-1 py-4 px-2 space-y-1">
-            <CollapsibleNavItem 
-                icon={LayoutGrid} 
-                isCollapsed={isCollapsed}
-                active
-                subItems={[
-                    { name: "Quick Order" },
-                    { name: "Price List" },
-                ]}
-            >
-                Order
-            </CollapsibleNavItem>
-            <NavItem icon={Bell} isCollapsed={isCollapsed}>Notification</NavItem>
-            <NavItem icon={Calculator} isCollapsed={isCollapsed}>Earning Calculator</NavItem>
-            <NavItem icon={List} isCollapsed={isCollapsed}>Price List</NavItem>
+            <NavItem icon={LayoutGrid} isCollapsed={isCollapsed} href="/en/dashboard">Dashboard</NavItem>
+            <NavItem icon={ShoppingCart} isCollapsed={isCollapsed} href="/en/orders">Orders</NavItem>
+            <NavItem icon={Package} isCollapsed={isCollapsed} href="/en/products">Products</NavItem>
+            <NavItem icon={Users} isCollapsed={isCollapsed} href="/en/users">Users</NavItem>
+            <NavItem icon={Bell} isCollapsed={isCollapsed} href="#">Notification</NavItem>
+            <NavItem icon={Calculator} isCollapsed={isCollapsed} href="#">Earning Calculator</NavItem>
+            <NavItem icon={List} isCollapsed={isCollapsed} href="#">Price List</NavItem>
         </nav>
     </aside>
   )
